@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MET Academy | Learn Today. Lead Tomorrow</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpg" href="met2026.jpg">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Poppins:wght@300;400;500;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#081D3A',
+                            navyLight: '#0d2d59',
+                            green: '#16A34A',
+                            greenLight: '#22c55e',
+                            dark: '#040b16',
+                            cardBg: 'rgba(8, 29, 58, 0.25)'
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif'],
+                        mono: ['Share Tech Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #040b16;
+            overflow-x: hidden;
+        }
+
+        /* Interactive Canvas background styling */
+        #quantum-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: auto;
+        }
+
+        .glassmorphism {
+            background: rgba(4, 11, 22, 0.45);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Glowing texts and effects */
+        .neon-glow-green {
+            text-shadow: 0 0 10px rgba(22, 163, 74, 0.8), 0 0 25px rgba(22, 163, 74, 0.4);
+        }
+        .neon-glow-blue {
+            text-shadow: 0 0 10px rgba(13, 45, 89, 0.8), 0 0 25px rgba(13, 45, 89, 0.4);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #040b16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #16A34A 0%, #081D3A 100%);
+            border-radius: 4px;
+        }
+
+        /* Dynamic orbit rings */
+        @keyframes techOrbit {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-orbit-slow {
+            animation: techOrbit 15s linear infinite;
+        }
+        .animate-orbit-reverse {
+            animation: techOrbit 10s linear infinite reverse;
+        }
+
+        /* NEW SHOCK EFFECT: 3D Perspective scroll reveals */
+        .reveal-init {
+            opacity: 0;
+            transform: translateY(60px) scale(0.92) rotateX(10deg);
+            filter: blur(12px);
+            transition: all 0.95s cubic-bezier(0.25, 1, 0.5, 1);
+            perspective: 1000px;
+        }
+
+        .reveal-active {
+            opacity: 1;
+            transform: translateY(0) scale(1) rotateX(0deg);
+            filter: blur(0);
+        }
+
+        /* Sequential cascading delays */
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+        .delay-400 { transition-delay: 400ms; }
+
+        /* Tech HUD Scroll Tracker line down the side */
+        .hud-dot-active {
+            box-shadow: 0 0 15px #22c55e, 0 0 5px #22c55e;
+            background-color: #22c55e !important;
+            border-color: #22c55e !important;
+        }
+    </style>
+</head>
+<body class="text-gray-100 selection:bg-brand-green selection:text-white antialiased">
+
+    <div id="preloader" class="fixed inset-0 z-[999] bg-[#02070e] flex flex-col items-center justify-center transition-opacity duration-1000">
+        <!-- Ambient background glow inside preloader -->
+        <div class="absolute inset-0 bg-gradient-to-tr from-brand-green/5 to-brand-navy/10 pointer-events-none"></div>
+
+        <!-- Central floating glowing circle element -->
+        <div id="preloader-content" class="absolute inset-0 flex flex-col items-center justify-center z-50 transition-all duration-1000">
+            <div class="relative w-48 h-48 flex items-center justify-center">
+                <!-- Tech ring rotating border -->
+                <div class="absolute inset-0 border-2 border-dashed border-brand-green/40 rounded-full animate-orbit-slow"></div>
+                <div class="absolute inset-2 border border-blue-500/30 rounded-full animate-orbit-reverse"></div>
+                <!-- Premium Liquid Silhouette Fill Container -->
+                <div id="loader-logo-container" class="relative w-32 h-32 bg-[#040b16] rounded-full p-2 border-2 border-brand-green/30 shadow-[0_0_40px_rgba(22,163,74,0.15)] flex items-center justify-center overflow-hidden transition-all duration-[1200ms] cubic-bezier(0.25, 1, 0.5, 1) z-[100]">
+                    <!-- Base Silhouette Layer (Completely Dark) -->
+                    <img src="met2026.jpg" alt="MET Logo" class="w-24 h-24 object-contain rounded-full opacity-10 filter brightness-0" onerror="this.src='https://placehold.co/150x150/081D3A/16A34A?text=MET'">
+                    <!-- Liquid Filling Layer (Color, clips upwards with progress) -->
+                    <img id="loader-logo-fill" src="met2026.jpg" alt="MET Logo" class="absolute w-24 h-24 object-contain rounded-full transition-all duration-150 ease-out" style="clip-path: inset(100% 0 0 0);" onerror="this.src='https://placehold.co/150x150/081D3A/16A34A?text=MET'">
+                </div>
+            </div>
+            <!-- Loading Neon Text -->
+            <h2 class="font-mono text-xs tracking-widest text-brand-green font-bold uppercase mt-6 neon-glow-green" id="preloader-msg">INITIALIZING MET PORTAL...</h2>
+            <!-- Glowing Loader Bar -->
+            <div class="w-64 h-1 bg-white/5 rounded-full mt-4 overflow-hidden relative border border-white/5">
+                <div id="preloader-bar" class="absolute left-0 top-0 h-full bg-gradient-to-r from-brand-green to-emerald-400 w-0 transition-all duration-300"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="met-hud-tracker" class="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-center gap-4 bg-brand-dark/80 border border-white/5 p-4 rounded-2xl glassmorphism">
+        <span class="text-[9px] font-mono text-brand-green font-bold tracking-widest">MET TRACK</span>
+        <div class="relative w-1 h-64 bg-white/5 rounded-full overflow-hidden flex flex-col justify-start">
+            <div id="hud-progress-fill" class="w-full bg-gradient-to-b from-brand-green to-emerald-400 h-0 transition-all duration-150"></div>
+        </div>
+        <div class="flex flex-col gap-3">
+            <a href="#about" id="hud-node-about" class="w-3 h-3 rounded-full bg-brand-dark border border-white/20 transition-all duration-300" title="Who We Are"></a>
+            <a href="#tracks" id="hud-node-tracks" class="w-3 h-3 rounded-full bg-brand-dark border border-white/20 transition-all duration-300" title="Our Tracks"></a>
+            <a href="#pathfinder" id="hud-node-pathfinder" class="w-3 h-3 rounded-full bg-brand-dark border border-white/20 transition-all duration-300" title="Pathfinder"></a>
+            <a href="#advisor" id="hud-node-advisor" class="w-3 h-3 rounded-full bg-brand-dark border border-white/20 transition-all duration-300" title="AI Advisor"></a>
+            <a href="#apply" id="hud-node-apply" class="w-3 h-3 rounded-full bg-brand-dark border border-white/20 transition-all duration-300" title="Register"></a>
+        </div>
+        <div class="text-[10px] font-mono text-gray-400" id="hud-scroll-pct">0%</div>
+    </div>
+
+    <!-- MAIN BODY CONTEXT CONTAINER -->
+    <div class="relative min-h-screen">
+        <!-- Interactive backdrop vectors canvas -->
+        <canvas id="quantum-canvas"></canvas>
+
+        <header class="fixed top-0 left-0 right-0 z-50 glassmorphism border-b border-white/5">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                <!-- Brand logo with smart scroll up function -->
+                <div onclick="scrollToTop()" class="flex items-center gap-3 cursor-pointer group select-none">
+                    <div id="nav-logo-target" class="relative w-12 h-12 rounded-lg overflow-hidden border border-brand-green/30 bg-white">
+                        <img src="met2026.jpg" alt="MET Logo" class="w-full h-full object-contain p-1" onerror="this.src='https://placehold.co/100x100/081D3A/16A34A?text=MET'">
+                    </div>
+                    <div>
+                        <span class="font-poppins font-extrabold text-xl tracking-wider text-white block">MET <span class="text-brand-green">GAZA</span></span>
+                        <span class="text-[9px] text-gray-400 font-cairo block -mt-1" id="nav-subtitle" data-i18n="nav_subtitle">أكاديمية مسارات التعليم الحديثة</span>
+                    </div>
+                </div>
+
+                <!-- Desktop menu navigation -->
+                <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold">
+                    <a href="#about" class="text-gray-300 hover:text-brand-green transition-colors" data-i18n="nav_about">من نحن</a>
+                    <a href="#tracks" class="text-gray-300 hover:text-brand-green transition-colors" data-i18n="nav_tracks">المسارات التقنية</a>
+                    <a href="#pathfinder" class="text-gray-300 hover:text-brand-green transition-colors" data-i18n="nav_pathfinder">مستكشف المستقبل</a>
+                    <a href="#advisor" class="text-brand-greenLight font-extrabold flex items-center gap-1.5 hover:text-white transition-colors" data-i18n="nav_advisor">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> المستشار الذكي
+                    </a>
+                    
+                    <!-- Language Switching Neon Pill Button -->
+                    <button onclick="toggleLanguage()" class="relative overflow-hidden px-4 py-1.5 rounded-full bg-brand-navy border border-brand-green/30 text-white hover:border-brand-green transition-all duration-300 text-xs font-bold font-mono">
+                        <span id="lang-indicator">EN</span>
+                    </button>
+
+                    <a href="#apply" class="px-5 py-2.5 rounded-lg bg-brand-green hover:bg-brand-greenLight text-white shadow-lg shadow-brand-green/20 hover:shadow-brand-green/40 transition-all duration-300" data-i18n="nav_apply">انضم إلينا الآن</a>
+                </nav>
+
+                <!-- Mobile Header items -->
+                <div class="flex items-center gap-3 lg:hidden">
+                    <button onclick="toggleLanguage()" class="px-3 py-1 rounded-full bg-brand-navy border border-brand-green/30 text-white text-xs font-bold font-mono">
+                        <span id="lang-indicator-mobile">EN</span>
+                    </button>
+                    <button id="mobile-menu-btn" class="text-gray-300 hover:text-white text-xl">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile sub-menu dropdown -->
+            <div id="mobile-menu" class="hidden lg:hidden glassmorphism border-b border-white/10 px-4 pt-2 pb-6 space-y-3">
+                <a href="#about" class="block py-2 text-gray-300 hover:text-brand-green font-medium" data-i18n="nav_about">من نحن</a>
+                <a href="#tracks" class="block py-2 text-gray-300 hover:text-brand-green font-medium" data-i18n="nav_tracks">المسارات التقنية</a>
+                <a href="#pathfinder" class="block py-2 text-gray-300 hover:text-brand-green font-medium" data-i18n="nav_pathfinder">مستكشف المستقبل</a>
+                <a href="#advisor" class="block py-2 text-brand-greenLight font-bold" data-i18n="nav_advisor">المستشار الذكي</a>
+                <a href="#apply" class="block text-center py-3 rounded-lg bg-brand-green text-white font-bold" data-i18n="nav_apply">انضم إلينا الآن</a>
+            </div>
+        </header>
+
+        <section class="relative pt-36 pb-20 md:pt-48 md:pb-32 overflow-hidden min-h-screen flex items-center z-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- Hero Texts -->
+                    <div class="lg:col-span-7 space-y-8 text-right" id="hero-text-container">
+                        <!-- Neon Badge floating element -->
+                        <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-brand-green/10 border border-brand-green/30 text-brand-greenLight text-xs font-semibold">
+                            <span class="w-2 h-2 rounded-full bg-brand-green animate-ping"></span>
+                            <span id="hero-badge" data-i18n="hero_badge">أكاديمية MET غزة — عهدٌ تقنيّ جديد للشباب</span>
+                        </div>
+
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
+                            <span id="hero-title-main" data-i18n="hero_title_main">تعلّم اليوم،</span> <br>
+                            <span id="hero-title-sub" class="text-transparent bg-clip-text bg-gradient-to-l from-brand-greenLight to-emerald-400 neon-glow-green" data-i18n="hero_title_sub">وقُد المستقبل</span>
+                        </h1>
+
+                        <p id="hero-desc" class="text-gray-300 text-base md:text-lg max-w-2xl leading-relaxed" data-i18n="hero_desc">
+                            الجسر الأول والأكثر موثوقية في غزة لربط الطلاب الجامعيين والخريجين بسوق العمل التقني العالمي. ببرامج معتمدة وتوجيه شخصي يبدأ من الأساس حتى استلام وظيفتك.
+                        </p>
+
+                        <!-- Call to actions with pulsing shadows -->
+                        <div class="flex flex-col sm:flex-row gap-5 pt-4 justify-start">
+                            <a href="#apply" class="px-8 py-4 rounded-xl bg-brand-green hover:bg-brand-greenLight text-white font-extrabold text-md text-center shadow-[0_0_20px_rgba(22,163,74,0.4)] hover:shadow-[0_0_35px_rgba(22,163,74,0.6)] transition-all duration-300 transform hover:-translate-y-1" data-i18n="hero_cta_primary">
+                                احجز مقعدك للمستقبل
+                            </a>
+                            <a href="#pathfinder" class="px-8 py-4 rounded-xl border border-white/10 hover:border-brand-green/40 hover:bg-brand-green/5 text-gray-200 hover:text-white font-bold text-md text-center transition-all duration-300 flex items-center justify-center gap-2">
+                                <span data-i18n="hero_cta_secondary">اكتشف مسارك المهني</span>
+                                <i class="fa-solid fa-arrow-left text-brand-green" id="arrow-dir-icon"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Holographic capsule with Secret trigger function (Logo Clicks) -->
+                    <div class="lg:col-span-5 flex flex-col justify-center items-center relative">
+                        <div onclick="handleHeroLogoClick()" class="relative w-80 h-80 sm:w-[380px] sm:h-[380px] cursor-pointer select-none group">
+                            <!-- Floating holographic particles -->
+                            <div class="absolute inset-0 rounded-full bg-brand-green/5 filter blur-3xl group-hover:bg-brand-green/10 transition-all"></div>
+                            <!-- Orbit Ring structures -->
+                            <div class="absolute inset-0 border-2 border-dashed border-brand-green/30 rounded-full animate-orbit-slow"></div>
+                            <div class="absolute inset-6 border border-blue-500/20 rounded-full animate-orbit-reverse"></div>
+
+                            <!-- Central holographic core card -->
+                            <div class="absolute inset-12 rounded-3xl bg-gradient-to-br from-brand-navyLight/60 to-brand-dark/95 p-6 border border-white/10 shadow-2xl flex flex-col justify-between overflow-hidden">
+                                <div class="flex justify-between items-center text-[9px] font-mono text-gray-400">
+                                    <span>MET GAZA BRAND IDENTITY</span>
+                                    <span class="text-brand-green animate-pulse">● SECURE SYS</span>
+                                </div>
+
+                                <!-- Actual logo in white canvas capsule -->
+                                <div class="my-auto relative flex justify-center items-center">
+                                    <div class="absolute w-36 h-36 bg-brand-green/10 rounded-full blur-2xl animate-pulse"></div>
+                                    <div class="relative p-4 bg-white rounded-2xl shadow-xl border border-brand-green/20 transform transition-transform duration-500 group-hover:scale-105">
+                                        <img src="met2026.jpg" alt="MET Gaza Identity" class="w-28 h-28 object-contain" onerror="this.src='https://placehold.co/150x150/081D3A/16A34A?text=MET'">
+                                    </div>
+                                </div>
+
+                                <div class="text-center font-mono text-[9px] text-gray-500">
+                                    VERSION 2026.1
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="py-24 bg-brand-dark relative border-t border-white/5 z-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center max-w-3xl mx-auto space-y-4 mb-16 reveal-init">
+                    <span class="text-brand-green text-xs font-mono tracking-widest uppercase block" data-i18n="about_tag">MISSION DEFICIT</span>
+                    <h2 class="text-3xl md:text-5xl font-extrabold text-white" id="about-title" data-i18n="about_title">لماذا تم تأسيس أكاديمية MET Gaza؟</h2>
+                    <div class="w-16 h-1 bg-brand-green mx-auto rounded-full mt-3"></div>
+                    <p class="text-gray-400 leading-relaxed text-sm" id="about-desc" data-i18n="about_desc">
+                        رأينا الفجوة العميقة وقررنا أن نغيرها من خلال جسر تعليمي حقيقي يأخذك من مقاعد الدراسة في غزة إلى سوق العمل الرقمي العالمي.
+                    </p>
+                </div>
+
+                <!-- 4 Solved Challenges Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Pillar 1 -->
+                    <div class="p-6 rounded-2xl bg-brand-cardBg border border-white/5 hover:border-brand-green/20 transition-all duration-300 reveal-init delay-100">
+                        <div class="w-10 h-10 rounded-xl bg-brand-green/10 text-brand-green flex items-center justify-center text-lg mb-4">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <h3 class="text-md font-bold text-white mb-2" data-i18n="pillar1_title">🎓 فجوة التعليم الجامعي</h3>
+                        <p class="text-xs text-gray-400 leading-relaxed" data-i18n="pillar1_desc">
+                            الشباب يتخرجون بشهادات أكاديمية نظرية عتيقة دون امتلاك المهارات الفعلية المطلوبة في سوق العمل الحديث.
+                        </p>
+                    </div>
+                    <!-- Pillar 2 -->
+                    <div class="p-6 rounded-2xl bg-brand-cardBg border border-white/5 hover:border-brand-green/20 transition-all duration-300 reveal-init delay-200">
+                        <div class="w-10 h-10 rounded-xl bg-brand-green/10 text-brand-green flex items-center justify-center text-lg mb-4">
+                            <i class="fa-solid fa-code"></i>
+                        </div>
+                        <h3 class="text-md font-bold text-white mb-2" data-i18n="pillar2_title">💻 غياب التعليم الحديث</h3>
+                        <p class="text-xs text-gray-400 leading-relaxed" data-i18n="pillar2_desc">
+                            افتقار قطاع غزة لمراكز موثوقة تقدم تدريباً بجودة عالمية في البرمجة والتصميم والذكاء الاصطناعي بمتابعة حية.
+                        </p>
+                    </div>
+                    <!-- Pillar 3 -->
+                    <div class="p-6 rounded-2xl bg-brand-cardBg border border-white/5 hover:border-brand-green/20 transition-all duration-300 reveal-init delay-300">
+                        <div class="w-10 h-10 rounded-xl bg-brand-green/10 text-brand-green flex items-center justify-center text-lg mb-4">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <h3 class="text-md font-bold text-white mb-2" data-i18n="pillar3_title">📉 ضعف جودة الكورسات</h3>
+                        <p class="text-xs text-gray-400 leading-relaxed" data-i18n="pillar3_desc">
+                            معظم المحتوى المتوفر إما فيديوهات مسجلة جافة بلا تفاعل، أو كورسات مبعثرة لا تقدم أي التزام بالنتائج.
+                        </p>
+                    </div>
+                    <!-- Pillar 4 -->
+                    <div class="p-6 rounded-2xl bg-brand-cardBg border border-white/5 hover:border-brand-green/20 transition-all duration-300 reveal-init delay-400">
+                        <div class="w-10 h-10 rounded-xl bg-brand-green/10 text-brand-green flex items-center justify-center text-lg mb-4">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h3 class="text-md font-bold text-white mb-2" data-i18n="pillar4_title">⚔️ فجوة ما بعد الحرب</h3>
+                        <p class="text-xs text-gray-400 leading-relaxed" data-i18n="pillar4_desc">
+                            الحرب خلقت فجوة حادة بين مهارات الشباب والواقع الاقتصادي، والتحول الرقمي والعمل الحر أصبحا طوق النجاة.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tracks" class="py-24 bg-[#030a13] relative border-t border-white/5 z-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center max-w-3xl mx-auto space-y-4 mb-16 reveal-init">
+                    <span class="text-brand-green text-xs font-mono tracking-widest uppercase block" data-i18n="tracks_tag">TECHNICAL PATHWAYS</span>
+                    <h2 class="text-3xl md:text-5xl font-extrabold text-white" data-i18n="tracks_title">المسارات التقنية الأساسية</h2>
+                    <p class="text-gray-400 leading-relaxed text-sm" data-i18n="tracks_desc">
+                        نركز استراتيجياً في المرحلة الأولى على المسارات الأكثر طلباً في سوق العمل لضمان جودة عالية وتوجيه مكثف للمتدربين.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Track 1: Programming -->
+                    <div class="p-8 rounded-3xl bg-brand-cardBg border border-white/5 relative overflow-hidden flex flex-col justify-between reveal-init delay-100">
+                        <div class="absolute top-0 left-0 w-2 h-full bg-brand-green"></div>
+                        <div>
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="px-3 py-1 rounded-full bg-brand-green/20 text-brand-green text-xs font-bold" data-i18n="track1_badge">الأكثر طلباً</span>
+                                <span class="text-3xl"><i class="fa-solid fa-code text-brand-green"></i></span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-3" data-i18n="track1_title">💻 البرمجة وتطوير البرمجيات</h3>
+                            <p class="text-xs text-gray-400 leading-relaxed mb-6" data-i18n="track1_desc">
+                                مسار شامل من الصفر حتى بناء المواقع وتطبيقات الهواتف الذكية. يركز على لغات البرمجة الحديثة (React, Node.js, Python) ومبادئ هندسة البرمجيات.
+                            </p>
+                        </div>
+                        <a href="#apply" onclick="selectFormTrack('programming')" class="block text-center py-3.5 rounded-xl bg-white/5 hover:bg-brand-green text-gray-300 hover:text-white font-bold transition-all" data-i18n="track_register">سجل في هذا المسار</a>
+                    </div>
+
+                    <!-- Track 2: UI/UX -->
+                    <div class="p-8 rounded-3xl bg-brand-cardBg border border-white/5 relative overflow-hidden flex flex-col justify-between reveal-init delay-200">
+                        <div class="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
+                        <div>
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-bold" data-i18n="track2_badge">إبداع رقمي</span>
+                                <span class="text-3xl"><i class="fa-solid fa-wand-magic-sparkles text-blue-400"></i></span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-3" data-i18n="track2_title">🎨 التصميم وجرافيك/واجهات المستخدم</h3>
+                            <p class="text-xs text-gray-400 leading-relaxed mb-6" data-i18n="track2_desc">
+                                تعلم أسس الهويات البصرية، تصميم واجهات وتجربة المستخدم (UI/UX) باستخدام Figma، وأسرار تقديم مخرجات إبداعية متكاملة للمصانع والشركات.
+                            </p>
+                        </div>
+                        <a href="#apply" onclick="selectFormTrack('design')" class="block text-center py-3.5 rounded-xl bg-white/5 hover:bg-blue-500 text-gray-300 hover:text-white font-bold transition-all" data-i18n="track_register">سجل في هذا المسار</a>
+                    </div>
+
+                    <!-- Track 3: Freelance -->
+                    <div class="p-8 rounded-3xl bg-brand-cardBg border border-white/5 relative overflow-hidden flex flex-col justify-between reveal-init delay-300">
+                        <div class="absolute top-0 left-0 w-2 h-full bg-purple-500"></div>
+                        <div>
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 text-xs font-bold" data-i18n="track3_badge">بوابة الدخل</span>
+                                <span class="text-3xl"><i class="fa-solid fa-wallet text-purple-400"></i></span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-3" data-i18n="track3_title">💼 العمل الحر والتوجيه المهني</h3>
+                            <p class="text-xs text-gray-400 leading-relaxed mb-6" data-i18n="track3_desc">
+                                مسار التحول المباشر؛ تعلم كيف تبيع مهاراتك على منصات العمل الحر العالمية (Upwork, Freelancer, Fiverr)، تجهيز CV متكامل وصناعة هوية جاذبة.
+                            </p>
+                        </div>
+                        <a href="#apply" onclick="selectFormTrack('freelancing')" class="block text-center py-3.5 rounded-xl bg-white/5 hover:bg-purple-500 text-gray-300 hover:text-white font-bold transition-all" data-i18n="track_register">سجل في هذا المسار</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pathfinder" class="py-24 bg-brand-dark relative z-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center max-w-3xl mx-auto space-y-4 mb-12 reveal-init">
+                    <span class="text-brand-green text-xs font-mono tracking-widest uppercase block" data-i18n="path_tag">FUTURE MAPPING</span>
+                    <h2 class="text-3xl md:text-5xl font-extrabold text-white" data-i18n="path_title">ابنِ خريطة طريقك المهنية والتعليمية الآن</h2>
+                    <p class="text-gray-400 leading-relaxed text-sm" data-i18n="path_desc">
+                        أين تقع حالياً في رحلتك المهنية؟ اختر وضعك الحالي لرؤية كيف ستقودك أكاديمية MET Gaza خطوة بخطوة نحو الاحتراف والتوظيف الفعلي.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
+                    <!-- Nav Tabs (Left side) -->
+                    <div class="lg:col-span-4 space-y-4 flex flex-col justify-center reveal-init delay-100">
+                        <button onclick="switchPathTab('student', this)" class="path-tab-btn active w-full p-5 rounded-2xl text-right transition-all duration-300 bg-brand-green text-white font-bold shadow-lg shadow-brand-green/20 border border-brand-green/30">
+                            <span class="block text-lg mb-1" data-i18n="path_tab1_title">🎓 طالب جامعي حالي</span>
+                            <span class="block text-xs font-normal" id="path-desc-student" data-i18n="path_tab1_desc">أتعلم الكثير من النظريات ولا أعرف كيف أبدأ عملياً..</span>
+                        </button>
+                        
+                        <button onclick="switchPathTab('graduated', this)" class="path-tab-btn w-full p-5 rounded-2xl text-right transition-all duration-300 bg-brand-cardBg hover:bg-brand-navy/50 text-gray-300 hover:text-white border border-white/5">
+                            <span class="block text-lg mb-1" data-i18n="path_tab2_title">💼 خريج تقني عاطل عن العمل</span>
+                            <span class="block text-xs font-normal" id="path-desc-grad" data-i18n="path_tab2_desc">لدي أساس برمجي لكني أعجز عن العثور على وظيفة..</span>
+                        </button>
+
+                        <button onclick="switchPathTab('changer', this)" class="path-tab-btn w-full p-5 rounded-2xl text-right transition-all duration-300 bg-brand-cardBg hover:bg-brand-navy/50 text-gray-300 hover:text-white border border-white/5">
+                            <span class="block text-lg mb-1" data-i18n="path_tab3_title">🌱 محب للتقنية وهاوٍ</span>
+                            <span class="block text-xs font-normal" id="path-desc-changer" data-i18n="path_tab3_desc">أرغب في تغيير مجالي بالكامل والبدء في تحقيق دخل مستقل..</span>
+                        </button>
+                    </div>
+
+                    <!-- Display Panel Contents (Right side) -->
+                    <div class="lg:col-span-8 p-8 md:p-12 rounded-3xl bg-brand-cardBg border border-white/10 relative flex flex-col justify-between reveal-init delay-200">
+                        <div id="path-content-box" class="space-y-6">
+                            <!-- Populated dynamically via script translation object -->
+                        </div>
+                        <div class="mt-8 pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
+                            <div class="text-right">
+                                <span class="text-xs text-gray-400 block font-semibold" data-i18n="path_expected">المخرج النهائي المتوقع</span>
+                                <span id="path-outcome-text" class="text-white font-bold text-sm text-glow neon-glow-green">بناء أساس مهني راسخ + أول بورتفوليو احترافي</span>
+                            </div>
+                            <a href="#apply" class="px-6 py-3 rounded-xl bg-brand-green hover:bg-brand-greenLight text-white font-bold text-xs" data-i18n="track_register">سجل في هذا المسار الآن</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="advisor" class="py-24 bg-[#030911] relative border-t border-b border-white/10 z-10">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center space-y-4 mb-12 reveal-init">
+                    <span class="px-3 py-1 rounded-full bg-brand-green/10 border border-brand-green/30 text-brand-green text-xs font-mono inline-block" data-i18n="ai_tag">NEURAL INTEL ADVISOR v1.5</span>
+                    <h2 class="text-3xl md:text-5xl font-extrabold text-white" data-i18n="ai_title">اطرح أي سؤال على مستشار الأكاديمية الذكي</h2>
+                    <p class="text-gray-400 text-sm max-w-2xl mx-auto" data-i18n="ai_desc">
+                        هل تشعر بالحيرة حول أي مسار تختار؟ اسأل مستشارنا الذكي المبرمج بالكامل على قيم، ورؤية، ومناهج أكاديمية MET Gaza.
+                    </p>
+                </div>
+
+                <!-- Live Chat Area UI -->
+                <div class="rounded-3xl border border-white/10 overflow-hidden glassmorphism flex flex-col h-[520px] reveal-init delay-100">
+                    <!-- Chat Header -->
+                    <div class="p-4 bg-brand-navy border-b border-white/10 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-white border border-brand-green/30 overflow-hidden">
+                                <img src="met2026.jpg" alt="Advisor Icon" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <span class="font-bold text-sm text-white block" data-i18n="ai_header_title">مستشار MET الأكاديمي</span>
+                                <span class="text-[10px] text-brand-green block" data-i18n="ai_header_sub">نشط ومستعد للإجابة</span>
+                            </div>
+                        </div>
+                        <span id="ai-status" class="text-xs text-gray-400 font-mono">Gemini (Offline Fallback)</span>
+                    </div>
+
+                    <!-- Conversation Message Screen -->
+                    <div id="chat-screen" class="flex-1 p-6 overflow-y-auto space-y-4 text-sm flex flex-col">
+                        <!-- Initial Bot greeting -->
+                        <div class="flex gap-3 max-w-[85%] self-start" id="ai-init-box">
+                            <div class="w-8 h-8 rounded-full bg-brand-navy border border-white/10 shrink-0 overflow-hidden">
+                                <img src="met2026.jpg" alt="MET Logo Icon" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-4 rounded-2xl rounded-tr-none bg-brand-navy border border-white/10 text-gray-200" id="ai-greeting-text" data-i18n="ai_greeting">
+                                مرحباً بك في MET Gaza! أنا مستشارك الأكاديمي الذكي. كيف يمكنني مساعدتك اليوم في اختيار مسارك المناسب؟ 😊
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fast suggestions chips -->
+                    <div class="px-4 py-2 bg-black/20 border-t border-white/5 flex gap-2 overflow-x-auto whitespace-nowrap text-xs">
+                        <button onclick="sendQuickQuery('ما هي المسارات المتوفرة؟')" class="px-3.5 py-2 rounded-full bg-brand-navy text-gray-300 border border-white/10 transition-all hover:bg-brand-green/20" data-i18n="ai_chip1">ما هي المسارات المتوفرة?</button>
+                        <button onclick="sendQuickQuery('هل الشهادة معتمدة دولياً؟')" class="px-3.5 py-2 rounded-full bg-brand-navy text-gray-300 border border-white/10 transition-all hover:bg-brand-green/20" data-i18n="ai_chip2">هل الشهادة معتمدة دولياً؟</button>
+                    </div>
+
+                    <!-- Chat input bar -->
+                    <div class="p-4 bg-brand-dark border-t border-white/10 flex gap-3">
+                        <input type="text" id="ai-input" placeholder="اكتب سؤالك هنا..." class="flex-1 px-4 py-3 rounded-xl bg-brand-cardBg border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-brand-green text-right" onkeydown="if(event.key === 'Enter') triggerAdvisorQuery()">
+                        <button onclick="triggerAdvisorQuery()" class="px-5 py-3 rounded-xl bg-brand-green text-white font-bold transition-all flex items-center justify-center gap-2">
+                            <span data-i18n="ai_send">إرسال</span>
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="apply" class="py-24 bg-brand-dark relative z-10">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="p-8 md:p-12 rounded-3xl bg-brand-cardBg border border-white/10 relative overflow-hidden shadow-2xl reveal-init">
+                    <div class="text-center space-y-3 mb-10">
+                        <span class="text-brand-green text-xs font-mono uppercase tracking-widest block" data-i18n="form_tag">ENROLLMENT PORTAL 2026</span>
+                        <h2 class="text-3xl font-extrabold text-white" data-i18n="form_title">ابدأ رحلتك وصمم مستقبلك الآن</h2>
+                        <p class="text-gray-400 text-xs" data-i18n="form_desc">أدخل بياناتك بالشكل الصحيح ليتم مراجعتها من فريق القبول وبدء المقابلة الأولى.</p>
+                    </div>
+
+                    <form id="admission-form" onsubmit="submitFormEntry(event)" class="space-y-6 text-right">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="block text-xs font-semibold text-gray-300" data-i18n="label_name">الاسم كاملاً باللغة العربية *</label>
+                                <input type="text" id="form-name" required placeholder="محمد أحمد" class="w-full px-4 py-3 rounded-xl bg-brand-dark border border-white/10 text-white focus:outline-none focus:border-brand-green">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-xs font-semibold text-gray-300" data-i18n="label_phone">رقم الواتساب للتواصل (مع كود الدولة) *</label>
+                                <input type="tel" id="form-phone" required placeholder="+97059XXXXXXXX" class="w-full px-4 py-3 rounded-xl bg-brand-dark border border-white/10 text-white text-left font-mono focus:outline-none focus:border-brand-green">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="block text-xs font-semibold text-gray-300" data-i18n="label_academic">المستوى الأكاديمي الحالي *</label>
+                                <select id="form-academic" required class="w-full px-4 py-3 rounded-xl bg-brand-dark border border-white/10 text-white focus:outline-none focus:border-brand-green">
+                                    <option value="student-it">طالب تكنولوجيا معلومات IT</option>
+                                    <option value="graduate-it">خريج تخصص تقني ويبحث عن عمل</option>
+                                    <option value="freelancer">أعمل بشكل حر وأريد صقل مهاراتي</option>
+                                </select>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-xs font-semibold text-gray-300" data-i18n="label_track">المسار التدريبي المستهدف *</label>
+                                <select id="form-track" required class="w-full px-4 py-3 rounded-xl bg-brand-dark border border-white/10 text-white focus:outline-none focus:border-brand-green">
+                                    <option value="programming">البرمجة وتطوير البرمجيات</option>
+                                    <option value="design">التصميم وجرافيك/واجهات المستخدم (UI/UX)</option>
+                                    <option value="freelancing">العمل الحر وبناء الملفات الشخصية</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-xs font-semibold text-gray-300" data-i18n="label_motivation">ما هي غايتك الكبرى بعد التخرج من الأكاديمية؟ *</label>
+                            <textarea id="form-motivation" required rows="3" placeholder="..." class="w-full px-4 py-3 rounded-xl bg-brand-dark border border-white/10 text-white focus:outline-none focus:border-brand-green"></textarea>
+                        </div>
+
+                        <button type="submit" id="form-submit-btn" class="w-full py-4 rounded-xl bg-brand-green hover:bg-brand-greenLight text-white font-extrabold text-sm flex justify-center items-center gap-2 shadow-lg shadow-brand-green/20">
+                            <span data-i18n="form_submit">إرسال طلب القبول وبدء المقابلة الأولى</span>
+                            <i id="form-spinner" class="fa-solid fa-circle-notch animate-spin hidden"></i>
+                        </button>
+                    </form>
+
+                    <!-- Success State markup -->
+                    <div id="form-success-state" class="hidden text-center py-10 space-y-4">
+                        <i class="fa-solid fa-circle-check text-5xl text-brand-green"></i>
+                        <h3 class="text-xl font-bold text-white" data-i18n="success_title">تم استلام طلبك بنجاح!</h3>
+                        <p class="text-xs text-gray-400 max-w-md mx-auto" data-i18n="success_desc">سيقوم منسق الأكاديمية بمراجعة طلبك والتواصل معك فوراً عبر رقم الواتساب المسجل لتحديد المقابلة الأولى.</p>
+                        <button onclick="resetRegistrationForm()" class="px-5 py-2.5 rounded-xl bg-white/5 text-xs text-gray-300" data-i18n="success_btn">تقديم طلب جديد</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="bg-[#02050b] border-t border-white/5 py-12 relative z-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+                <div class="flex justify-center items-center gap-3">
+                    <img src="met2026.jpg" alt="MET Logo Footer" class="w-10 h-10 rounded-lg p-1 bg-white">
+                    <span class="font-poppins font-extrabold text-lg text-white">MET <span class="text-brand-green">GAZA</span></span>
+                </div>
+                <p class="text-xs text-gray-400 max-w-md mx-auto" data-i18n="footer_text">
+                    نحن لا نمنح الشهادات بشكل تلقائي. نعمل ضمن إطار اعتماد صارم من المجلس الأمريكي للتنمية والتدريب، لتمكين الشباب كفاءات حقيقية في سوق العمل الرقمي.
+                </p>
+                <div class="text-[10px] text-gray-600 font-mono">
+                    © 2026 MODERN EDUCATION TRACK (MET). ALL RIGHTS RESERVED.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div id="secure-pass-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md hidden text-right">
+        <div class="w-full max-w-md p-6 rounded-3xl bg-brand-navy border border-white/10 space-y-6">
+            <div class="text-center space-y-2">
+                <div class="w-16 h-16 rounded-full bg-brand-green/10 text-brand-green mx-auto flex items-center justify-center text-xl border border-brand-green/20">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white">قاعدة البيانات السرية للمشرفين</h3>
+                <p class="text-xs text-gray-400">يرجى إدخال كلمة سر المشرف لفتح لوحة التحكم بالأكاديمية</p>
+            </div>
+            <input type="password" id="secure-pass-input" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl bg-brand-dark border border-white/10 text-white text-center text-md tracking-widest focus:outline-none">
+            <p id="secure-error" class="text-red-400 text-xs font-semibold text-center hidden">كلمة المرور غير صحيحة!</p>
+            <div class="flex gap-3">
+                <button onclick="verifySecretPassword()" class="flex-1 py-3 rounded-xl bg-brand-green text-white font-bold text-xs">تأكيد الدخول</button>
+                <button onclick="closeSecretPasswordModal()" class="flex-1 py-3 rounded-xl bg-white/5 text-gray-300 text-xs">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="master-admin-modal" class="fixed inset-0 z-[90] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden text-right">
+        <div class="w-full max-w-5xl h-[90vh] rounded-3xl bg-brand-navy border border-white/10 flex flex-col overflow-hidden">
+            <!-- Header bar -->
+            <div class="p-6 border-b border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 bg-[#051122]">
+                <div class="flex items-center gap-3">
+                    <img src="met2026.jpg" class="w-10 h-10 rounded-lg p-1 bg-white" alt="MET Logo">
+                    <div>
+                        <h3 class="text-md font-bold text-white flex items-center gap-2">
+                            <span>لوحة تحكم الأكاديمية والتعديل الشامل</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-brand-green/20 text-brand-green font-mono">SECURED ACCESS</span>
+                        </h3>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="closeAdminPanel()" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-xs">إغلاق</button>
+                </div>
+            </div>
+
+            <!-- Tab Navigation bar -->
+            <div class="bg-black/10 border-b border-white/5 flex gap-2 overflow-x-auto px-6">
+                <button onclick="switchAdminTab('applicants')" id="tab-applicants" class="py-4 px-4 text-xs font-bold border-b-2 border-brand-green text-white">👤 المنتسبين الجدد</button>
+                <button onclick="switchAdminTab('activity')" id="tab-activity" class="py-4 px-4 text-xs font-bold text-gray-400 hover:text-white border-b-2 border-transparent">📊 متتبع الحركات والنشاطات</button>
+                <button onclick="switchAdminTab('content')" id="tab-content" class="py-4 px-4 text-xs font-bold text-gray-400 hover:text-white border-b-2 border-transparent">📝 تعديل نصوص الموقع</button>
+                <button onclick="switchAdminTab('apis')" id="tab-apis" class="py-4 px-4 text-xs font-bold text-gray-400 hover:text-white border-b-2 border-transparent">⚙️ إعدادات الربط والـ API</button>
+            </div>
+
+            <!-- Tab screens container -->
+            <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- Section 1: APPLICANTS -->
+                <div id="admin-sec-applicants" class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-white text-sm">الطلاب المسجلون حديثاً عبر الموقع</h4>
+                        <button onclick="clearAllApplicants()" class="px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-bold">حذف الكل</button>
+                    </div>
+                    <div class="overflow-x-auto rounded-xl border border-white/5">
+                        <table class="w-full text-right text-xs">
+                            <thead class="bg-brand-navy text-gray-300 font-bold border-b border-white/5">
+                                <tr>
+                                    <th class="p-3">اسم الطالب</th>
+                                    <th class="p-3">رقم الهاتف / الواتساب</th>
+                                    <th class="p-3">المستوى</th>
+                                    <th class="p-3">المسار</th>
+                                    <th class="p-3">الدافع والغاية</th>
+                                    <th class="p-3 text-center">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="applicants-tbody" class="divide-y divide-white/5 text-gray-300">
+                                <!-- Dynamic applicants markup -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Section 2: EVENT ACTIVITY LOG -->
+                <div id="admin-sec-activity" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-white text-sm">سجل الحركات المباشر للمستخدمين (Live Logger)</h4>
+                        <button onclick="clearActivityLog()" class="px-3 py-1.5 rounded-lg bg-white/5 text-gray-300 text-xs">تفريغ السجل</button>
+                    </div>
+                    <div class="p-4 rounded-xl bg-black/40 border border-white/5 h-80 overflow-y-auto font-mono text-[10px] space-y-1 text-right select-text" id="activity-logger-box">
+                        <!-- Live user navigation activities will output here -->
+                    </div>
+                </div>
+
+                <!-- Section 3: COMPLETE CONTENT CUSTOMIZER (BILINGUAL) -->
+                <div id="admin-sec-content" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center flex-wrap gap-4">
+                        <div>
+                            <h4 class="font-bold text-white text-sm">تعديل نصوص الموقع بالكامل بـ اللغتين</h4>
+                            <p class="text-xs text-gray-400">يمكنك تعديل أي قيمة نصية وحفظها لتنعكس على الزوار.</p>
+                        </div>
+                        <button onclick="bakeAndExportHTMLFile()" class="px-5 py-2.5 rounded-xl bg-brand-green hover:bg-brand-greenLight text-white text-xs font-extrabold flex items-center gap-2 shadow-lg shadow-brand-green/20">
+                            <i class="fa-solid fa-file-export"></i>
+                            <span>تصدير وحفظ ملف HTML المحدث</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/5">
+                        <!-- Arabic Content -->
+                        <div class="space-y-4">
+                            <h5 class="text-brand-green text-xs font-bold border-b border-brand-green/20 pb-1">المحتوى العربي (AR)</h5>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] text-gray-400">العنوان العريض الأول:</label>
+                                <input type="text" id="edit-ar-title-main" class="w-full px-3 py-2 rounded-lg bg-brand-dark border border-white/10 text-white text-xs">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] text-gray-400">العنوان العريض الملون:</label>
+                                <input type="text" id="edit-ar-title-sub" class="w-full px-3 py-2 rounded-lg bg-brand-dark border border-white/10 text-white text-xs">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] text-gray-400">الوصف التعريفي للـ Hero:</label>
+                                <textarea id="edit-ar-desc" rows="3" class="w-full px-3 py-2 rounded-lg bg-brand-dark border border-white/10 text-white text-xs"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- English Content -->
+                        <div class="space-y-4 text-left font-poppins">
+                            <h5 class="text-blue-400 text-xs font-bold border-b border-blue-500/20 pb-1">English Content (EN)</h5>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] text-gray-400">Main Title Segment:</label>
+                                <input type="text" id="edit-en-title-main" class="w-full px-3 py-2 rounded-lg bg-brand-dark border border-white/10 text-white text-xs">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] text-gray-400">Neon Colored Sub-Title:</label>
+                                <input type="text" id="edit-en-title-sub" class="w-full px-3 py-2 rounded-lg bg-brand-dark border border-white/10 text-white text-xs">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] text-gray-400">Hero Intro Description:</label>
+                                <textarea id="edit-en-desc" rows="3" class="w-full px-3 py-2 rounded-lg bg-brand-dark border border-white/10 text-white text-xs"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-white/5">
+                        <button onclick="saveSiteTextContent()" class="px-6 py-2.5 rounded-xl bg-brand-green text-white text-xs font-bold">حفظ التغييرات</button>
+                    </div>
+                </div>
+
+                <!-- Section 4: APIS & CREDENTIALS -->
+                <div id="admin-sec-apis" class="space-y-4 hidden">
+                    <h4 class="font-bold text-white text-sm">إدارة مفاتيح الـ API والبريد الإلكتروني المستهدف</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- AI system credentials -->
+                        <div class="p-5 rounded-2xl bg-brand-cardBg border border-white/10 space-y-4">
+                            <span class="text-brand-green text-xs font-mono font-bold">GEMINI 1.5 FLASH SYSTEM</span>
+                            <div class="space-y-2">
+                                <label class="block text-xs text-gray-300">مفتاح API الخاص بك (Gemini API Key):</label>
+                                <input type="password" id="admin-api-gemini" placeholder="AIzaSy..." class="w-full px-3 py-2 rounded-xl bg-brand-dark border border-white/10 text-white text-xs">
+                            </div>
+                        </div>
+                        <!-- EmailJS credentials -->
+                        <div class="p-5 rounded-2xl bg-brand-cardBg border border-white/10 space-y-4">
+                            <span class="text-blue-400 text-xs font-mono font-bold">EMAILJS GMAIL SENDER</span>
+                            <div class="space-y-2">
+                                <label class="block text-xs text-gray-300">EmailJS Public Key:</label>
+                                <input type="text" id="admin-api-jskey" placeholder="Public key..." class="w-full px-3 py-2 rounded-xl bg-brand-dark border border-white/10 text-white text-xs">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[10px] text-gray-400">Service ID:</label>
+                                    <input type="text" id="admin-api-service" class="w-full px-3 py-1.5 rounded-lg bg-brand-dark border border-white/10 text-white text-xs">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-gray-400">Template ID:</label>
+                                    <input type="text" id="admin-api-template" class="w-full px-3 py-1.5 rounded-lg bg-brand-dark border border-white/10 text-white text-xs">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-white/5">
+                        <button onclick="saveAdminAPISettings()" class="px-6 py-2.5 rounded-xl bg-brand-green text-white text-xs font-bold">حفظ مفاتيح الربط والاتصال</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // System wide defaults representing original translation values to be baked or overwritten by administrator
+        const defaultContent = {
+            ar: {
+                nav_subtitle: "أكاديمية مسارات التعليم الحديثة",
+                nav_about: "من نحن",
+                nav_tracks: "المسارات التقنية",
+                nav_pathfinder: "مستكشف المستقبل",
+                nav_advisor: "المستشار الذكي",
+                nav_apply: "انضم إلينا الآن",
+                hero_badge: "أكاديمية MET غزة — عهدٌ تقنيّ جديد للشباب",
+                hero_title_main: "تعلّم اليوم،",
+                hero_title_sub: "وقُد المستقبل",
+                hero_desc: "الجسر الأول والأكثر موثوقية في غزة لربط الطلاب الجامعيين والخريجين بسوق العمل التقني العالمي. ببرامج معتمدة وتوجيه شخصي يبدأ من الأساس حتى استلام وظيفتك.",
+                hero_cta_primary: "احجز مقعدك للمستقبل",
+                hero_cta_secondary: "اكتشف مسارك المهني",
+                about_tag: "MISSION DEFICIT",
+                about_title: "لماذا تم تأسيس أكاديمية MET Gaza؟",
+                about_desc: "رأينا الفجوة العميقة وقررنا أن نغيرها من خلال جسر تعليمي حقيقي يأخذك من مقاعد الدراسة في غزة إلى سوق العمل الرقمي العالمي.",
+                pillar1_title: "🎓 فجوة التعليم الجامعي",
+                pillar1_desc: "الشباب يتخرجون بشهادات أكاديمية نظرية عتيقة دون امتلاك المهارات الفعلية المطلوبة في سوق العمل الحديث.",
+                pillar2_title: "💻 غياب التعليم الحديث",
+                pillar2_desc: "افتقار قطاع غزة لمراكز موثوقة تقدم تدريباً بجودة عالمية في البرمجة والتصميم والذكاء الاصطناعي بمتابعة حية.",
+                pillar3_title: "📉 ضعف جودة الكورسات",
+                pillar3_desc: "معظم المحتوى المتوفر إما فيديوهات مسجلة جافة بلا تفاعل، أو كورسات مبعثرة لا تقدم أي التزام بالنتائج.",
+                pillar4_title: "⚔️ فجوة ما بعد الحرب",
+                pillar4_desc: "الحرب خلقت فجوة حادة بين مهارات الشباب والواقع الاقتصادي، والتحول الرقمي والعمل الحر أصبحا طوق النجاة.",
+                tracks_tag: "TECHNICAL PATHWAYS",
+                tracks_title: "المسارات التقنية الأساسية",
+                tracks_desc: "نركز استراتيجياً في المرحلة الأولى على المسارات الأكثر طلباً في سوق العمل لضمان جودة عالية وتوجيه مكثف للمتدربين.",
+                track1_badge: "الأكثر طلباً",
+                track1_title: "💻 البرمجة وتطوير البرمجيات",
+                track1_desc: "مسار شامل من الصفر حتى بناء المواقع وتطبيقات الهواتف الذكية. يركز على لغات البرمجة الحديثة (React, Node.js, Python) ومبادئ هندسة البرمجيات.",
+                track2_badge: "إبداع رقمي",
+                track2_title: "🎨 التصميم وجرافيك/واجهات المستخدم",
+                track2_desc: "تعلم أسس الهويات البصرية، تصميم واجهات وتجربة المستخدم (UI/UX) باستخدام Figma، وأسرار تقديم مخرجات إبداعية متكاملة للمصانع والشركات.",
+                track3_badge: "بوابة الدخل",
+                track3_title: "💼 العمل الحر والتوجيه المهني",
+                track3_desc: "مسار التحول المباشر؛ تعلم كيف تبيع مهاراتك على منصات العمل الحر العالمية (Upwork, Freelancer, Fiverr)، تجهيز CV متكامل وصناعة هوية جاذبة.",
+                track_register: "سجل في هذا المسار",
+                path_tag: "FUTURE MAPPING",
+                path_title: "ابنِ خريطة طريقك المهنية والتعليمية الآن",
+                path_desc: "أين تقع حالياً في رحلتك المهنية؟ اختر وضعك الحالي لرؤية كيف ستقودك أكاديمية MET Gaza خطوة بخطوة نحو الاحتراف والتوظيف الفعلي.",
+                path_tab1_title: "🎓 طالب جامعي حالي",
+                path_tab1_desc: "أتعلم الكثير من النظريات ولا أعرف كيف أبدأ عملياً..",
+                path_tab2_title: "💼 خريج تقني عاطل عن العمل",
+                path_tab2_desc: "لدي أساس برمجي لكني أعجز عن العثور على وظيفة..",
+                path_tab3_title: "🌱 محب للتقنية وهاوٍ",
+                path_tab3_desc: "أرغب في تغيير مجالي بالكامل والبدء في تحقيق دخل مستقل..",
+                path_expected: "المخرج النهائي المتوقع",
+                ai_tag: "NEURAL INTEL ADVISOR v1.5",
+                ai_title: "اطرح أي سؤال على مستشار الأكاديمية الذكي",
+                ai_desc: "هل تشعر بالحيرة حول أي مسار تختار؟ اسأل مستشارنا الذكي المبرمج بالكامل على قيم، ورؤية، ومناهج أكاديمية MET Gaza.",
+                ai_header_title: "مستشار MET الأكاديمي",
+                ai_header_sub: "نشط ومستعد للإجابة",
+                ai_greeting: "مرحباً بك في MET Gaza! أنا مستشارك الأكاديمي الذكي. كيف يمكنني مساعدتك اليوم في اختيار مسارك المناسب؟ 😊",
+                ai_chip1: "ما هي المسارات المتوفرة؟",
+                ai_chip2: "هل الشهادة معتمدة دولياً؟",
+                ai_send: "إرسال",
+                form_tag: "ENROLLMENT PORTAL 2026",
+                form_title: "ابدأ رحلتك وصمم مستقبلك الآن",
+                form_desc: "أدخل بياناتك بالشكل الصحيح ليتم مراجعتها من فريق القبول وبدء المقابلة الأولى.",
+                label_name: "الاسم كاملاً باللغة العربية *",
+                label_phone: "رقم الواتساب للتواصل (مع كود الدولة) *",
+                label_academic: "المستوى الأكاديمي الحالي *",
+                label_track: "المسار التدريبي المستهدف *",
+                label_motivation: "ما هي غايتك الكبرى بعد التخرج من الأكاديمية؟ *",
+                form_submit: "إرسال طلب القبول وبدء المقابلة الأولى",
+                success_title: "تم استلام طلبك بنجاح!",
+                success_desc: "سيقوم منسق الأكاديمية بمراجعة طلبك والتواصل معك فوراً عبر رقم الواتساب المسجل لتحديد المقابلة الأولى.",
+                success_btn: "تقديم طلب جديد",
+                footer_text: "نحن لا نمنح الشهادات بشكل تلقائي. نعمل ضمن إطار اعتماد صارم من المجلس الأمريكي للتنمية والتدريب، لتمكين الشباب كفاءات حقيقية في سوق العمل الرقمي."
+            },
+            en: {
+                nav_subtitle: "Modern Education Track Academy",
+                nav_about: "Who We Are",
+                nav_tracks: "Tech Tracks",
+                nav_pathfinder: "Path Finder",
+                nav_advisor: "AI Advisor",
+                nav_apply: "Join Us Now",
+                hero_badge: "MET Gaza Academy — A New Technical Era for Youth",
+                hero_title_main: "Learn Today,",
+                hero_title_sub: "Lead Tomorrow",
+                hero_desc: "The first and most reliable bridge in Gaza connecting university students and graduates to the global tech market. Verified programs with 1-on-1 expert mentorship.",
+                hero_cta_primary: "Book Your Seat Now",
+                hero_cta_secondary: "Discover Your Path",
+                about_tag: "MISSION DEFICIT",
+                about_title: "Why Was MET Gaza Founded?",
+                about_desc: "We witnessed the huge gap between theoretical academic certificates and real market demands, and decided to establish a true professional bridge.",
+                pillar1_title: "🎓 Academic Deficit",
+                pillar1_desc: "Graduates finish university with academic degrees but zero hands-on production experience to show.",
+                pillar2_title: "💻 Absence of Real Tech Training",
+                pillar2_desc: "Gaza lacked real premium bootcamps offering production-level engineering and design.",
+                pillar3_title: "📉 Poor Content Quality",
+                pillar3_desc: "Most available courses are passive dry lectures without active code reviews or mentoring.",
+                pillar4_title: "⚔️ Post-War Gap",
+                pillar4_desc: "The crisis created a dramatic gap between skills and survival, making remote freelance an absolute shield.",
+                tracks_tag: "TECHNICAL PATHWAYS",
+                tracks_title: "Our Specialized Tech Bootcamps",
+                tracks_desc: "We strategically focus on high-demand, high-income tech tracks to guarantee quality output.",
+                track1_badge: "Hot Choice",
+                track1_title: "💻 Software & Web Development",
+                track1_desc: "Complete production path from scratch up to building enterprise applications with React, Node.js and engineering principles.",
+                track2_badge: "Digital Art",
+                track2_title: "🎨 Creative UI/UX Graphic Design",
+                track2_desc: "Master layout theory, user psychology, branding, and design interactive visual flows with Figma.",
+                track3_badge: "Freelance",
+                track3_title: "💼 Remote Freelance & Growth",
+                track3_desc: "Learn to secure global remote jobs on Upwork, construct proposals, and build payout pipelines in Gaza.",
+                track_register: "Enroll in Track",
+                path_tag: "FUTURE MAPPING",
+                path_title: "Map Your Modern Educational Path Now",
+                path_desc: "Where do you stand now? Choose your status to visualize how MET Gaza leads you towards high proficiency.",
+                path_tab1_title: "🎓 Current Student",
+                path_tab1_desc: "Studying heavy theory and feeling lost about real application..",
+                path_tab2_title: "💼 Unemployed Graduate",
+                path_tab2_desc: "I have standard academic basics but companies reject my profiles..",
+                path_tab3_title: "🌱 Career Changer",
+                path_tab3_desc: "Wanting to shift my entire path to digital freelance..",
+                path_expected: "Expected Final Milestone",
+                ai_tag: "NEURAL INTEL ADVISOR v1.5",
+                ai_title: "Ask Our Smart Academic Advisor Anything",
+                ai_desc: "Confused about which field to choose? Consult our custom AI assistant trained directly on MET Academy values.",
+                ai_header_title: "MET Advisor",
+                ai_header_sub: "Active & Ready",
+                ai_greeting: "Welcome to MET Gaza! I am your interactive advisor. How can I help you choose your dream path today? 😊",
+                ai_chip1: "What tracks are available?",
+                ai_chip2: "Is the certificate verified?",
+                ai_send: "Send",
+                form_tag: "ENROLLMENT PORTAL 2026",
+                form_title: "Begin Your Epic Tech Journey Now",
+                form_desc: "Fill your verified details for the registration team to schedule your initial entrance interview.",
+                label_name: "Full Name (Arabic preferred) *",
+                label_phone: "WhatsApp Number (with country code) *",
+                label_academic: "Current Academic Level *",
+                label_track: "Target bootcamp track *",
+                label_motivation: "What is your main goal after graduating? *",
+                form_submit: "Submit Application & Start Interview",
+                success_title: "Application Received Successfully!",
+                success_desc: "Our admission team will review your parameters and connect with you via WhatsApp to align your entrance test.",
+                success_btn: "Submit another form",
+                footer_text: "We do not issue participation certificates. Credentials are fully tied to performance, project outputs, and direct mentorship milestones."
+            }
+        };
+
+        let activeLang = localStorage.getItem('met_active_lang') || 'ar';
+        let siteContent = JSON.parse(localStorage.getItem('met_site_content_v2')) || defaultContent;
+        let logoClicks = 0;
+        let lastLogoClickTime = 0;
+        let applicants = JSON.parse(localStorage.getItem('met_applicants_list')) || [];
+        let activityLog = JSON.parse(localStorage.getItem('met_activity_log')) || [];
+
+        const pathfinderData = {
+            ar: {
+                student: {
+                    tag: "طالب جامعي حالي",
+                    title: "من التشتت النظري إلى وضوح الرؤية والتطبيق",
+                    desc: "بدلاً من حفظ الأكواد وحل الخوارزميات يدوياً دون معرفة أين يصب هذا في الواقع، نضعك في مسار يبني لك أساساً حياً:",
+                    steps: ["تنسيق مسار موازٍ لدراستك الجامعية دون ضغط.", "إنشاء مشروع متكامل حقيقي لملف أعمالك.", "دخول مجتمع MET للتوجيه المباشر مع خبراء السوق."],
+                    outcome: "أساس مهني متين + أول بورتفوليو برمجيات معتمد"
+                },
+                graduated: {
+                    tag: "خريج تقني عاطل",
+                    title: "تحويل دراستك الجامعية إلى فرصة عمل حقيقية",
+                    desc: "تمتلك الأساسيات النظرية لكن تعجز عن العثور على وظيفة؟ نعمل معك في المسار المتقدم والمكثف:",
+                    steps: ["العمل في فرق برمجية تحاكي واقع الشركات الكبرى.", "تجهيز السيرة الذاتية وملف LinkedIn ومستودعات GitHub.", "تشبيك مهني مباشر مع شركات كبرى في الخليج العربي."],
+                    outcome: "عقد عمل حقيقي أو تدريب تقني منتهي بالتوظيف"
+                },
+                changer: {
+                    tag: "تغيير المجال بالكامل",
+                    title: "اكتساب مهارة حديثة وبدء تحقيق الدخل",
+                    desc: "إذا كنت تريد البدء من الصفر لتحسين واقعك المالي، نوفر لك مساراً يراعي خلفيتك ويقودك بسلاسة:",
+                    steps: ["مقابلة إرشادية لتحديد المهارة الأنسب لشغفك.", "توجيه خطوة بخطوة وتصحيح الواجبات يومياً.", "التمكين الفعلي لدخول منصات العمل الحر وتحصيل أول 100$."],
+                    outcome: "تحقيق دخل مستقل ومستقر كفريلانسر تقني"
+                }
+            },
+            en: {
+                student: {
+                    tag: "Current University Student",
+                    title: "From Academic Dispersal to Production Mastery",
+                    desc: "Instead of raw memorization, we place you on a path to develop real software outputs:",
+                    steps: ["A parallel study track compatible with your university terms.", "Building your first live production app from database to UI.", "Weekly face-time reviews with actual industry engineers."],
+                    outcome: "Sturdy engineering foundation + verified GitHub portfolio"
+                },
+                graduated: {
+                    tag: "Unemployed Tech Graduate",
+                    title: "Bridging University Knowledge with Modern Jobs",
+                    desc: "You have basic loops down but struggle with enterprise tools? This pathway fixes that gap:",
+                    steps: ["Simulating agency teamwork using Agile frameworks and git.", "Complete polish for LinkedIn profiles, portfolios, and coding tests.", "Direct pipeline submission to Gulf partners and remote tech clients."],
+                    outcome: "A technical career contract or verified direct internship"
+                },
+                changer: {
+                    tag: "Complete Career Shifter",
+                    title: "Learn a Profit/Digital Skill from Absolute Zero",
+                    desc: "No technical background required. We systematically guide you to build high-demand assets:",
+                    steps: ["Initial alignment to choose coding, graphics, UI or design.", "Daily reviews to ensure you never get stuck or overwhelmed.", "Practical freelance training to close contracts and secure your first $100."],
+                    outcome: "Becoming a remote freelancer earning independent digital income"
+                }
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initCinematicPreloader();
+            initQuantumFluidCanvas();
+            applyLanguageStyle(activeLang);
+            initScrollAnimations();
+            logLiveActivity("الموقع تّم تشغيله بنجاح لزائر جديد.");
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            logLiveActivity("المستخدم قام بالتمرير للبداية.");
+        }
+
+        function initCinematicPreloader() {
+            const bar = document.getElementById("preloader-bar");
+            const msg = document.getElementById("preloader-msg");
+            const logoFill = document.getElementById("loader-logo-fill");
+            const logoContainer = document.getElementById("loader-logo-container");
+            const preloaderContent = document.getElementById("preloader-content");
+            let progress = 0;
+
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 8) + 3; // Smoother loader progression to showcase fluid effect
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    // Trigger System Stabilized State
+                    msg.innerHTML = activeLang === 'ar' ? 'اكتمل التحميل بنجاح! جاري التهيئة...' : 'SYSTEM STABILIZED! BOOTING...';
+                    logoContainer.style.boxShadow = "0 0 50px rgba(34, 197, 94, 0.7)";
+                    logoContainer.style.borderColor = "#22c55e";
+
+                    setTimeout(() => {
+                        // Dynamic coordinate mapping to fly exactly to the top right header logo
+                        const navLogoTarget = document.getElementById("nav-logo-target");
+                        let translateX = 0;
+                        let translateY = 0;
+                        let scaleFactor = 0.375; // fallback scale (48px / 128px)
+
+                        if (navLogoTarget) {
+                            const targetRect = navLogoTarget.getBoundingClientRect();
+                            const loaderRect = logoContainer.getBoundingClientRect();
+                            
+                            // Calculate center-to-center delta for perfect snapping
+                            const targetCenterX = targetRect.left + (targetRect.width / 2);
+                            const targetCenterY = targetRect.top + (targetRect.height / 2);
+                            const loaderCenterX = loaderRect.left + (loaderRect.width / 2);
+                            const loaderCenterY = loaderRect.top + (loaderRect.height / 2);
+
+                            translateX = targetCenterX - loaderCenterX;
+                            translateY = targetCenterY - loaderCenterY;
+                            scaleFactor = targetRect.width / loaderRect.width;
+                        }
+                        
+                        // Perform the magical flight transition and morph shape/color to match target perfectly
+                        logoContainer.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scaleFactor}) rotate(360deg)`;
+                        logoContainer.style.borderRadius = "0.5rem"; // Snaps smoothly to rounded-lg of navbar target
+                        logoContainer.style.backgroundColor = "#ffffff"; // Morphs into white bg of target
+                        logoContainer.style.padding = "0.25rem"; // Snaps to correct padding
+                        
+                        bar.parentElement.style.opacity = "0";
+                        msg.style.opacity = "0";
+
+                        setTimeout(() => {
+                            // Smoothly fade out the entire preloader overlay
+                            const preloader = document.getElementById("preloader");
+                            preloader.style.opacity = "0";
+                            preloaderContent.style.opacity = "0";
+                            
+                            setTimeout(() => {
+                                preloader.remove();
+                                logLiveActivity("تجاوز شاشة الترحيب بنجاح.");
+                            }, 1000);
+                        }, 800);
+                    }, 1000);
+                }
+                bar.style.width = `${progress}%`;
+                if (logoFill) {
+                    logoFill.style.clipPath = `inset(${100 - progress}% 0 0 0)`;
+                }
+            }, 80);
+        }
+
+        function toggleLanguage() {
+            activeLang = activeLang === 'ar' ? 'en' : 'ar';
+            localStorage.setItem('met_active_lang', activeLang);
+            applyLanguageStyle(activeLang);
+            logLiveActivity(`تغيير لغة العرض إلى: ${activeLang.toUpperCase()}`);
+        }
+
+        function applyLanguageStyle(lang) {
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+            if (lang === 'ar') {
+                document.body.style.fontFamily = "'Cairo', sans-serif";
+                document.getElementById("arrow-dir-icon").className = "fa-solid fa-arrow-left text-brand-green";
+            } else {
+                document.body.style.fontFamily = "'Poppins', 'Inter', sans-serif";
+                document.getElementById("arrow-dir-icon").className = "fa-solid fa-arrow-right text-brand-green";
+            }
+
+            document.querySelectorAll("[data-i18n]").forEach(element => {
+                const translationKey = element.getAttribute("data-i18n");
+                if (siteContent[lang] && siteContent[lang][translationKey]) {
+                    element.innerHTML = siteContent[lang][translationKey];
+                }
+            });
+
+            document.getElementById("lang-indicator").innerText = lang === 'ar' ? 'English (EN)' : 'العربية (AR)';
+            document.getElementById("lang-indicator-mobile").innerText = lang === 'ar' ? 'EN' : 'AR';
+
+            switchPathTab('student', document.querySelector('.path-tab-btn'));
+        }
+
+        function handleHeroLogoClick() {
+            const now = new Date().getTime();
+            if (now - lastLogoClickTime > 2000) {
+                logoClicks = 1;
+            } else {
+                logoClicks++;
+            }
+            lastLogoClickTime = now;
+
+            if (logoClicks === 3) {
+                logoClicks = 0;
+                logLiveActivity("تم الضغط على الشعار الأوسط 3 مرات سريعة.");
+                openSecretPasswordModal();
+            }
+        }
+
+        function openSecretPasswordModal() {
+            document.getElementById("secure-pass-input").value = "";
+            document.getElementById("secure-error").classList.add("hidden");
+            document.getElementById("secure-pass-modal").classList.remove("hidden");
+        }
+
+        function closeSecretPasswordModal() {
+            document.getElementById("secure-pass-modal").classList.add("hidden");
+        }
+
+        function verifySecretPassword() {
+            const entered = document.getElementById("secure-pass-input").value.trim();
+            if (entered === 'MET2026' || entered === 'EM2006') {
+                logLiveActivity("تم فك التشفير بنجاح ودخول المشرف للقاعدة.");
+                closeSecretPasswordModal();
+                openAdminPanel();
+            } else {
+                logLiveActivity("محاولة غير مصرحة لفتح لوحة التحكم السرية!");
+                document.getElementById("secure-error").classList.remove("hidden");
+            }
+        }
+
+        function initScrollAnimations() {
+            // Setup Intersection Observer for reveal elements
+            const elementsToReveal = document.querySelectorAll('.reveal-init');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('reveal-active');
+                    }
+                });
+            }, {
+                threshold: 0.12,
+                rootMargin: "0px 0px -50px 0px"
+            });
+
+            elementsToReveal.forEach(el => observer.observe(el));
+
+            // Dynamic Sidebar HUD progress update
+            window.addEventListener('scroll', () => {
+                const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+                if (totalHeight <= 0) return;
+
+                const scrollPct = Math.round((window.scrollY / totalHeight) * 100);
+                
+                // Update fill height
+                const fillElement = document.getElementById('hud-progress-fill');
+                if (fillElement) fillElement.style.height = `${scrollPct}%`;
+
+                // Update text percentage indicator
+                const pctText = document.getElementById('hud-scroll-pct');
+                if (pctText) pctText.innerText = `${scrollPct}%`;
+
+                // Highlight HUD dot nodes based on active view section
+                const sections = ['about', 'tracks', 'pathfinder', 'advisor', 'apply'];
+                sections.forEach(secId => {
+                    const sec = document.getElementById(secId);
+                    const hudNode = document.getElementById(`hud-node-${secId}`);
+                    if (sec && hudNode) {
+                        const rect = sec.getBoundingClientRect();
+                        if (rect.top <= window.innerHeight * 0.4 && rect.bottom >= window.innerHeight * 0.3) {
+                            hudNode.classList.add('hud-dot-active');
+                        } else {
+                            hudNode.classList.remove('hud-dot-active');
+                        }
+                    }
+                });
+            });
+        }
+
+        function logLiveActivity(event, meta = "") {
+            const time = new Date().toLocaleTimeString('ar-EG', { hour12: true });
+            const logItem = { time, event, meta };
+            activityLog.unshift(logItem);
+            
+            if (activityLog.length > 200) activityLog.pop();
+            localStorage.setItem('met_activity_log', JSON.stringify(activityLog));
+            renderActivityLoggerBox();
+        }
+
+        function renderActivityLoggerBox() {
+            const box = document.getElementById("activity-logger-box");
+            if (!box) return;
+
+            if (activityLog.length === 0) {
+                box.innerHTML = `<div class="text-gray-500 text-center py-6">لا توجد حركات مسجلة حالياً..</div>`;
+                return;
+            }
+
+            box.innerHTML = activityLog.map(act => `
+                <div class="border-b border-white/5 pb-1">
+                    <span class="text-brand-green font-bold">[${act.time}]</span>
+                    <span class="text-white">${act.event}</span>
+                    ${act.meta ? `<span class="text-gray-400 block pl-4 mt-0.5">${act.meta}</span>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function clearActivityLog() {
+            activityLog = [];
+            localStorage.removeItem('met_activity_log');
+            renderActivityLoggerBox();
+            logLiveActivity("تم تفريغ سجل الحركات بالكامل.");
+        }
+
+        function openAdminPanel() {
+            document.getElementById("master-admin-modal").classList.remove("hidden");
+            renderApplicantsTable();
+            renderActivityLoggerBox();
+            populateContentEditors();
+            populateAPIDefaults();
+        }
+
+        function closeAdminPanel() {
+            document.getElementById("master-admin-modal").classList.add("hidden");
+        }
+
+        function switchAdminTab(tab) {
+            const tabs = ["applicants", "activity", "content", "apis"];
+            tabs.forEach(t => {
+                document.getElementById(`tab-${t}`).className = "py-4 px-4 text-xs font-bold text-gray-400 hover:text-white border-b-2 border-transparent";
+                document.getElementById(`admin-sec-${t}`).classList.add("hidden");
+            });
+
+            document.getElementById(`tab-${tab}`).className = "py-4 px-4 text-xs font-bold border-b-2 border-brand-green text-white";
+            document.getElementById(`admin-sec-${tab}`).classList.remove("hidden");
+            logLiveActivity(`المشرف تصفح تبويب الإدارة: ${tab}`);
+        }
+
+        function renderApplicantsTable() {
+            const tbody = document.getElementById("applicants-tbody");
+            if (!tbody) return;
+
+            if (applicants.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-gray-500">لا يوجد متقدمين بعد..</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = applicants.map((app, idx) => {
+                const directWhatsapp = app.phone.replace(/[^0-9]/g, '');
+                return `
+                    <tr class="hover:bg-white/5 transition-colors">
+                        <td class="p-3 font-bold">${app.name}</td>
+                        <td class="p-3">
+                            <a href="https://wa.me/${directWhatsapp}" target="_blank" class="px-2.5 py-1 rounded bg-brand-green/20 text-brand-green font-mono hover:bg-brand-green/45 flex items-center gap-1 w-fit">
+                                <i class="fa-brands fa-whatsapp"></i>
+                                <span>${app.phone}</span>
+                            </a>
+                        </td>
+                        <td class="p-3 text-[11px]">${app.academic}</td>
+                        <td class="p-3 text-[11px] font-bold text-brand-greenLight">${app.track}</td>
+                        <td class="p-3 text-[11px] max-w-xs truncate" title="${app.motivation}">${app.motivation}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="removeApplicantRecord(${idx})" class="px-2 py-1 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded border border-red-500/10">حذف</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function removeApplicantRecord(idx) {
+            logLiveActivity(`حذف ملف الطالب المتقدم: ${applicants[idx].name}`);
+            applicants.splice(idx, 1);
+            localStorage.setItem('met_applicants_list', JSON.stringify(applicants));
+            renderApplicantsTable();
+        }
+
+        function clearAllApplicants() {
+            applicants = [];
+            localStorage.removeItem('met_applicants_list');
+            renderApplicantsTable();
+            logLiveActivity("تفريغ وحذف جميع بيانات المنتسبين بالكامل.");
+        }
+
+        function populateContentEditors() {
+            document.getElementById("edit-ar-title-main").value = siteContent.ar.hero_title_main;
+            document.getElementById("edit-ar-title-sub").value = siteContent.ar.hero_title_sub;
+            document.getElementById("edit-ar-desc").value = siteContent.ar.hero_desc;
+
+            document.getElementById("edit-en-title-main").value = siteContent.en.hero_title_main;
+            document.getElementById("edit-en-title-sub").value = siteContent.en.hero_title_sub;
+            document.getElementById("edit-en-desc").value = siteContent.en.hero_desc;
+        }
+
+        function saveSiteTextContent() {
+            siteContent.ar.hero_title_main = document.getElementById("edit-ar-title-main").value;
+            siteContent.ar.hero_title_sub = document.getElementById("edit-ar-title-sub").value;
+            siteContent.ar.hero_desc = document.getElementById("edit-ar-desc").value;
+
+            siteContent.en.hero_title_main = document.getElementById("edit-en-title-main").value;
+            siteContent.en.hero_title_sub = document.getElementById("edit-en-title-sub").value;
+            siteContent.en.hero_desc = document.getElementById("edit-en-desc").value;
+
+            localStorage.setItem('met_site_content_v2', JSON.stringify(siteContent));
+            applyLanguageStyle(activeLang);
+            logLiveActivity("تحديث وحفظ نصوص الموقع بنجاح من لوحة التحرير.");
+            closeAdminPanel();
+        }
+
+        function bakeAndExportHTMLFile() {
+            saveSiteTextContent(); // save latest values
+
+            let originalSource = document.documentElement.outerHTML;
+            const updatedContentString = JSON.stringify(siteContent, null, 4);
+
+            let updatedSource = originalSource.replace(
+                /const defaultContent = \{[\s\S]*?\};/,
+                `const defaultContent = ${updatedContentString};`
+            );
+
+            const finalDoc = "<!DOCTYPE html>\n<html lang=\"ar\" dir=\"rtl\" class=\"scroll-smooth\">\n" + updatedSource + "\n</html>";
+
+            const blob = new Blob([finalDoc], { type: "text/html;charset=utf-8" });
+            const anchor = document.createElement("a");
+            anchor.href = URL.createObjectURL(blob);
+            anchor.download = "met.html";
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
+
+            logLiveActivity("تم بنجاح تصدير ملف met.html المدمج بالقيم الافتراضية الجديدة.");
+        }
+
+        function populateAPIDefaults() {
+            document.getElementById("admin-api-gemini").value = localStorage.getItem('met_api_gemini') || '';
+            document.getElementById("admin-api-jskey").value = localStorage.getItem('met_api_jskey') || '';
+            document.getElementById("admin-api-service").value = localStorage.getItem('met_api_service') || '';
+            document.getElementById("admin-api-template").value = localStorage.getItem('met_api_template') || '';
+        }
+
+        function saveAdminAPISettings() {
+            const gemini = document.getElementById("admin-api-gemini").value.trim();
+            const jskey = document.getElementById("admin-api-jskey").value.trim();
+            const service = document.getElementById("admin-api-service").value.trim();
+            const template = document.getElementById("admin-api-template").value.trim();
+
+            localStorage.setItem('met_api_gemini', gemini);
+            localStorage.setItem('met_api_jskey', jskey);
+            localStorage.setItem('met_api_service', service);
+            localStorage.setItem('met_api_template', template);
+
+            if (gemini) {
+                document.getElementById("ai-status").innerText = "Gemini API (Active)";
+                document.getElementById("ai-status").classList.add("text-brand-green");
+            } else {
+                document.getElementById("ai-status").innerText = "Gemini (Offline Fallback)";
+                document.getElementById("ai-status").classList.remove("text-brand-green");
+            }
+
+            if (jskey) {
+                emailjs.init(jskey);
+            }
+
+            logLiveActivity("حفظ وإعداد وتحديث مفاتيح نظام الـ AI والبريد بنجاح.");
+            closeAdminPanel();
+        }
+
+        function switchPathTab(key, btn) {
+            if (!btn) return;
+
+            const tabs = document.querySelectorAll(".path-tab-btn");
+            tabs.forEach(t => {
+                t.className = "path-tab-btn w-full p-5 rounded-2xl text-right transition-all duration-300 bg-brand-cardBg hover:bg-brand-navy/50 text-gray-300 hover:text-white border border-white/5";
+            });
+
+            btn.className = "path-tab-btn active w-full p-5 rounded-2xl text-right transition-all duration-300 bg-brand-green text-white font-bold shadow-lg shadow-brand-green/20 border border-brand-green/30";
+
+            const data = pathfinderData[activeLang][key];
+            const displayBox = document.getElementById("path-content-box");
+            const outcomeText = document.getElementById("path-outcome-text");
+
+            if (!data) return;
+
+            let stepsHTML = '';
+            data.steps.forEach((step, idx) => {
+                stepsHTML += `
+                    <div class="flex gap-4 items-start">
+                        <div class="w-8 h-8 rounded-full bg-brand-green/20 text-brand-green font-bold text-xs flex items-center justify-center shrink-0 border border-brand-green/30">${idx + 1}</div>
+                        <div>
+                            <h4 class="font-bold text-white text-xs">${activeLang === 'ar' ? 'الخطوة' : 'Step'} ${idx+1}</h4>
+                            <p class="text-xs text-gray-400 mt-0.5">${step}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            displayBox.innerHTML = `
+                <div class="space-y-4">
+                    <span class="px-3 py-1 rounded-full bg-brand-green/10 border border-brand-green/30 text-brand-green text-[10px] font-mono tracking-wider inline-block">${data.tag}</span>
+                    <h3 class="text-xl font-bold text-white">${data.title}</h3>
+                    <p class="text-gray-300 text-xs leading-relaxed">${data.desc}</p>
+                    <div class="grid grid-cols-1 gap-4 pt-4">
+                        ${stepsHTML}
+                    </div>
+                </div>
+            `;
+
+            outcomeText.innerText = data.outcome;
+            logLiveActivity(`المستكشف: استكشاف تفاصيل مسار (${data.tag})`);
+        }
+
+        function selectFormTrack(val) {
+            document.getElementById("form-track").value = val;
+            logLiveActivity(`المستخدم اختار المسار مباشرة: ${val}`);
+        }
+
+        function initQuantumFluidCanvas() {
+            const canvas = document.getElementById("quantum-canvas");
+            const ctx = canvas.getContext("2d");
+            let particles = [];
+            let mouse = { x: null, y: null, radius: 150 };
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            window.addEventListener("resize", resize);
+            resize();
+
+            window.addEventListener("mousemove", (e) => {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+            });
+
+            window.addEventListener("mouseout", () => {
+                mouse.x = null;
+                mouse.y = null;
+            });
+
+            class FluidNode {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.baseX = this.x;
+                    this.baseY = this.y;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.angle = Math.random() * Math.PI * 2;
+                    this.speed = Math.random() * 0.4 + 0.1;
+                    this.color = Math.random() > 0.5 ? 'rgba(22, 163, 74, 0.4)' : 'rgba(13, 45, 89, 0.5)';
+                }
+
+                update() {
+                    this.angle += 0.005;
+                    this.x += Math.cos(this.angle) * this.speed;
+                    this.y += Math.sin(this.angle) * this.speed;
+
+                    if (this.x < 0) this.x = canvas.width;
+                    if (this.x > canvas.width) this.x = 0;
+                    if (this.y < 0) this.y = canvas.height;
+                    if (this.y > canvas.height) this.y = 0;
+
+                    if (mouse.x !== null && mouse.y !== null) {
+                        let dx = mouse.x - this.x;
+                        let dy = mouse.y - this.y;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance < mouse.radius) {
+                            let force = (mouse.radius - distance) / mouse.radius;
+                            let forceDirectionX = dx / distance;
+                            let forceDirectionY = dy / distance;
+                            
+                            this.x -= forceDirectionX * force * 3;
+                            this.y -= forceDirectionY * force * 3;
+                        }
+                    }
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                }
+            }
+
+            const totalNodes = Math.min(Math.round(canvas.width / 12), 120);
+            for (let i = 0; i < totalNodes; i++) {
+                particles.push(new FluidNode());
+            }
+
+            function frame() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+
+                    for (let j = i + 1; j < particles.length; j++) {
+                        let dx = particles[i].x - particles[j].x;
+                        let dy = particles[i].y - particles[j].y;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance < 140) {
+                            ctx.beginPath();
+                            ctx.strokeStyle = `rgba(22, 163, 74, ${0.08 * (1 - distance / 140)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(frame);
+            }
+            frame();
+        }
+
+        const systemPrompt = `
+            You are the smart Academic Advisor of MODERN EDUCATION TRACK (MET) Gaza Academy (2026).
+            You must reply in the user's querying language (AR or EN) in a supportive, high-tech, and encouraging tone.
+            Key info to follow:
+            1. MET Gaza is a bridge helping IT/Tech students after the war to secure freelancing or global employment.
+            2. We have 3 tracks: Software Dev, UI/UX graphic design, and Freelancing/Work coaching.
+            3. All tracks are hybrid (online + offline).
+            4. Certificates are accredited by the American Council for Development and Training, strictly based on attendance and project completion.
+        `;
+
+        async function triggerAdvisorQuery() {
+            const input = document.getElementById("ai-input");
+            const q = input.value.trim();
+            if (!q) return;
+
+            input.value = "";
+            renderChatMessage(q, "user");
+            logLiveActivity("طرح الزائر سؤالاً على المستشار الذكي", `السؤال: ${q}`);
+
+            const loadId = renderChatMessage(activeLang === 'ar' ? 'جاري تحليل استفسارك الأكاديمي...' : 'Analyzing parameters...', "loading");
+            const geminiKey = localStorage.getItem('met_api_gemini');
+
+            if (geminiKey) {
+                try {
+                    const apiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiKey}`;
+                    const payload = {
+                        contents: [{ parts: [{ text: q }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    };
+
+                    const res = await fetch(apiEndpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!res.ok) throw new Error('API request failed.');
+
+                    const data = await res.json();
+                    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                    
+                    document.getElementById(loadId).remove();
+                    if (text) {
+                        renderChatMessage(text, "bot");
+                        logLiveActivity("رد المستشار بنجاح عبر Gemini.");
+                    } else {
+                        renderChatMessage(getFallbackAdvisorResponse(q), "bot");
+                    }
+                } catch (e) {
+                    document.getElementById(loadId).remove();
+                    renderChatMessage(getFallbackAdvisorResponse(q), "bot");
+                    logLiveActivity("فشل الاتصال بـ Gemini، تفعيل الذكاء الاحتياطي.");
+                }
+            } else {
+                setTimeout(() => {
+                    document.getElementById(loadId).remove();
+                    renderChatMessage(getFallbackAdvisorResponse(q), "bot");
+                }, 800);
+            }
+        }
+
+        function sendQuickQuery(text) {
+            document.getElementById("ai-input").value = text;
+            triggerAdvisorQuery();
+        }
+
+        function renderChatMessage(txt, role) {
+            const screen = document.getElementById("chat-screen");
+            const id = 'msg-' + Math.random().toString(36).substr(2, 9);
+            const msg = document.createElement("div");
+
+            if (role === 'user') {
+                msg.className = `flex gap-3 max-w-[85%] self-end ${activeLang === 'ar' ? 'flex-row-reverse' : ''}`;
+                msg.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-brand-green/20 text-brand-green shrink-0 flex items-center justify-center font-bold text-xs">${activeLang === 'ar' ? 'أنت' : 'You'}</div>
+                    <div class="p-4 rounded-2xl rounded-tr-none bg-brand-green text-white text-xs">${txt}</div>
+                `;
+            } else if (role === 'loading') {
+                msg.id = id;
+                msg.className = "flex gap-3 max-w-[85%] self-start";
+                msg.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-brand-navy shrink-0 overflow-hidden">
+                        <img src="met2026.jpg" class="w-full h-full object-cover animate-spin">
+                    </div>
+                    <div class="p-4 rounded-2xl rounded-tr-none bg-brand-navy border border-white/10 text-gray-400 italic text-xs">
+                        <i class="fa-solid fa-circle-notch animate-spin mr-1"></i> ${txt}
+                    </div>
+                `;
+            } else {
+                msg.className = "flex gap-3 max-w-[85%] self-start animate-fade-in";
+                msg.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-brand-navy shrink-0 overflow-hidden">
+                        <img src="met2026.jpg" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4 rounded-2xl rounded-tr-none bg-brand-navy border border-white/10 text-gray-200 text-xs leading-relaxed">
+                        ${txt.replace(/\n/g, '<br>')}
+                    </div>
+                `;
+            }
+
+            screen.appendChild(msg);
+            screen.scrollTop = screen.scrollHeight;
+            return id;
+        }
+
+        function getFallbackAdvisorResponse(q) {
+            const query = q.toLowerCase();
+            if (activeLang === 'ar') {
+                if (query.includes('مسار') || query.includes('تخصص') || query.includes('تعلم')) {
+                    return `نقدم 3 مسارات عملية أساسية في MET Gaza لضمان العبور السريع لسوق العمل:\n\n1. **البرمجة وتطوير الويب:** تأسيس متكامل مع مراجعة كود يومية وبناء مشاريع.\n2. **التصميم (UI/UX):** دراسة الواجهات والهويات البصرية بـ Figma.\n3. **العمل الحر (Freelance):** مهارات التقدم للمشاريع وجني أولى الأرباح.\n\nهل تود منّا مساعدتك في التسجيل بإحداها؟`;
+                }
+                if (query.includes('شهادة') || query.includes('اعتماد')) {
+                    return `شهاداتنا معتمدة رسمياً ومباشرة من **"المجلس الأمريكي للتنمية والتدريب"**.\n\nلكن نؤكد دائماً: لا يتم منح الشهادات لمجرد الحضور، بل يجب تسليم كافة الواجبات واجتياز التقييمات وبناء مشروع التخرج لتثبت جدارتك المطلقة في السوق!`;
+                }
+                return `سؤال رائع جداً! في أكاديمية MET Gaza، نتبع نهجاً تدريبياً وتوجيهياً متكاملاً لربطك بفرصة حقيقية. هل تود التعرف أكثر على طرق التوظيف أم تريد التسجيل في أحد مساراتنا؟ 😊`;
+            } else {
+                if (query.includes('track') || query.includes('learn') || query.includes('bootcamp')) {
+                    return `We offer 3 high-intensity practical bootcamps in MET Gaza:\n\n1. **Software Development:** Full production web engineering with React & Node.\n2. **UI/UX Design:** Figma layout, wireframing & user experience design.\n3. **Freelance Mastery:** Contract bidding, proposal building & payout structures.\n\nWhich path fits your profile the best?`;
+                }
+                return `That is a solid question! MET Gaza Academy aims to help students establish practical portfolios to secure remote roles. Would you like to check our accreditation or read more about our entrance milestones?`;
+            }
+        }
+
+        async function submitFormEntry(e) {
+            e.preventDefault();
+
+            const name = document.getElementById("form-name").value;
+            const phone = document.getElementById("form-phone").value;
+            const academic = document.getElementById("form-academic").value;
+            const track = document.getElementById("form-track").value;
+            const motivation = document.getElementById("form-motivation").value;
+
+            const submitBtn = document.getElementById("form-submit-btn");
+            const spinner = document.getElementById("form-spinner");
+
+            submitBtn.disabled = true;
+            spinner.classList.remove("hidden");
+
+            const record = { name, phone, academic, track, motivation };
+            applicants.push(record);
+            localStorage.setItem('met_applicants_list', JSON.stringify(applicants));
+            logLiveActivity("طالب جديد أرسل نموذج القبول والمقابلة الأولى!", `الاسم: ${name} | مسار: ${track}`);
+
+            const jskey = localStorage.getItem('met_api_jskey');
+            const service = localStorage.getItem('met_api_service');
+            const template = localStorage.getItem('met_api_template');
+
+            if (jskey && service && template) {
+                try {
+                    emailjs.init(jskey);
+                    await emailjs.send(service, template, {
+                        student_name: name,
+                        student_phone: phone,
+                        academic_level: academic,
+                        selected_track: track,
+                        motivation_letter: motivation
+                    });
+                    logLiveActivity("تم بنجاح توجيه الطلب إلى حساب Gmail الخاص بالمشرف.");
+                } catch (err) {
+                    logLiveActivity("فشل توجيه البريد لـ Gmail، ولكن تم حفظ الطلب بقاعدة البيانات بنجاح.", err.toString());
+                }
+            }
+
+            submitBtn.disabled = false;
+            spinner.classList.add("hidden");
+
+            document.getElementById("admission-form").classList.add("hidden");
+            document.getElementById("form-success-state").classList.remove("hidden");
+        }
+
+        function resetRegistrationForm() {
+            document.getElementById("admission-form").reset();
+            document.getElementById("admission-form").classList.remove("hidden");
+            document.getElementById("form-success-state").classList.add("hidden");
+        }
+
+        document.getElementById("mobile-menu-btn").addEventListener("click", () => {
+            const menu = document.getElementById("mobile-menu");
+            menu.classList.toggle("hidden");
+        });
+    </script>
+</body>
+</html>
