@@ -17,10 +17,6 @@
     <!-- EmailJS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     
-    <!-- Firebase SDK Compat (Added for Real-time Cloud Database Sync) -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
     <script>
         tailwind.config = {
             theme: {
@@ -677,7 +673,7 @@
                     <div>
                         <h3 class="text-md font-bold text-white flex items-center gap-2">
                             <span>لوحة تحكم الأكاديمية والتعديل الشامل</span>
-                            <span id="db-status-badge" class="text-[9px] px-2 py-0.5 rounded-full bg-brand-green/20 text-brand-green font-mono">SECURED ACCESS</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-brand-green/20 text-brand-green font-mono">SECURED ACCESS</span>
                         </h3>
                     </div>
                 </div>
@@ -787,7 +783,7 @@
 
                 <!-- Section 4: APIS & CREDENTIALS -->
                 <div id="admin-sec-apis" class="space-y-4 hidden">
-                    <h4 class="font-bold text-white text-sm">إدارة مفاتيح الـ API وقاعدة البيانات السحابية</h4>
+                    <h4 class="font-bold text-white text-sm">إدارة مفاتيح الـ API والبريد الإلكتروني المستهدف</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- AI system credentials -->
                         <div class="p-5 rounded-2xl bg-brand-cardBg border border-white/10 space-y-4">
@@ -816,33 +812,6 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Firebase Cloud Config Panel -->
-                    <div class="p-5 rounded-2xl bg-brand-cardBg border border-brand-green/20 space-y-4 mt-4">
-                        <div class="flex justify-between items-center">
-                            <span class="text-brand-green text-xs font-mono font-bold">FIREBASE REALTIME DATABASE SYNC</span>
-                            <span class="text-[10px] text-gray-400">اربط الـ Firebase لمنع التخزين المحلي التقليدي والحفظ سحابياً فوراً!</span>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="space-y-1">
-                                <label class="block text-[10px] text-gray-300">API Key:</label>
-                                <input type="text" id="admin-fb-apikey" placeholder="AIzaSy..." class="w-full px-3 py-1.5 rounded-lg bg-brand-dark border border-white/10 text-white text-xs font-mono">
-                            </div>
-                            <div class="space-y-1">
-                                <label class="block text-[10px] text-gray-300">Database URL (رابط قاعدة البيانات):</label>
-                                <input type="text" id="admin-fb-dburl" placeholder="https://your-app.firebaseio.com" class="w-full px-3 py-1.5 rounded-lg bg-brand-dark border border-white/10 text-white text-xs font-mono">
-                            </div>
-                            <div class="space-y-1">
-                                <label class="block text-[10px] text-gray-300">Project ID:</label>
-                                <input type="text" id="admin-fb-projectid" placeholder="met-academy-xxxx" class="w-full px-3 py-1.5 rounded-lg bg-brand-dark border border-white/10 text-white text-xs font-mono">
-                            </div>
-                            <div class="space-y-1">
-                                <label class="block text-[10px] text-gray-300">App ID:</label>
-                                <input type="text" id="admin-fb-appid" placeholder="1:xxxx:web:xxxx" class="w-full px-3 py-1.5 rounded-lg bg-brand-dark border border-white/10 text-white text-xs font-mono">
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="pt-4 border-t border-white/5">
                         <button onclick="saveAdminAPISettings()" class="px-6 py-2.5 rounded-xl bg-brand-green text-white text-xs font-bold">حفظ مفاتيح الربط والاتصال</button>
                     </div>
@@ -1002,10 +971,89 @@
         let lastLogoClickTime = 0;
         let applicants = JSON.parse(localStorage.getItem('met_applicants_list')) || [];
         let activityLog = JSON.parse(localStorage.getItem('met_activity_log')) || [];
-        
-        // Firebase global instances
-        let firebaseDB = null;
-        window.userIP = "جاري الكشف...";
+
+        const pathfinderData = {
+            ar: {
+                student: {
+                    tag: "طالب جامعي حالي",
+                    title: "من التشتت النظري إلى وضوح الرؤية والتطبيق",
+                    desc: "بدلاً من حفظ الأكواد وحل الخوارزميات يدوياً دون معرفة أين يصب هذا في الواقع، نضعك في مسار يبني لك أساساً حياً:",
+                    steps: ["تنسيق مسار موازٍ لدراستك الجامعية دون ضغط.", "إنشاء مشروع متكامل حقيقي لملف أعمالك.", "دخول مجتمع MET للتوجيه المباشر مع خبراء السوق."],
+                    outcome: "أساس مهني متين + أول بورتفوليو برمجيات معتمد"
+                },
+                graduated: {
+                    tag: "خريج تقني عاطل",
+                    title: "تحويل دراستك الجامعية إلى فرصة عمل حقيقية",
+                    desc: "تمتلك الأساسيات النظرية لكن تعجز عن العثور على وظيفة؟ نعمل معك في المسار المتقدم والمكثف:",
+                    steps: ["العمل في فرق برمجية تحاكي واقع الشركات الكبرى.", "تجهيز السيرة الذاتية وملف LinkedIn ومستودعات GitHub.", "تشبيك مهني مباشر مع شركات كبرى في الخليج العربي."],
+                    outcome: "عقد عمل حقيقي أو تدريب تقني منتهي بالتوظيف"
+                },
+                changer: {
+                    tag: "تغيير المجال بالكامل",
+                    title: "اكتساب مهارة حديثة وبدء تحقيق الدخل",
+                    desc: "إذا كنت تريد البدء من الصفر لتحسين واقعك المالي، نوفر لك مساراً يراعي خلفيتك ويقودك بسلاسة:",
+                    steps: ["مقابلة إرشادية لتحديد المهارة الأنسب لشغفك.", "توجيه خطوة بخطوة وتصحيح الواجبات يومياً.", "التمكين الفعلي لدخول منصات العمل الحر وتحصيل أول 100$."],
+                    outcome: "تحقيق دخل مستقل ومستقر كفريلانسر تقني"
+                }
+            },
+            en: {
+                student: {
+                    tag: "Current University Student",
+                    title: "From Academic Dispersal to Production Mastery",
+                    desc: "Instead of raw memorization, we place you on a path to develop real software outputs:",
+                    steps: ["A parallel study track compatible with your university terms.", "Building your first live production app from database to UI.", "Weekly face-time reviews with actual industry engineers."],
+                    outcome: "Sturdy engineering foundation + verified GitHub portfolio"
+                },
+                graduated: {
+                    tag: "Unemployed Tech Graduate",
+                    title: "Bridging University Knowledge with Modern Jobs",
+                    desc: "You have basic loops down but struggle with enterprise tools? This pathway fixes that gap:",
+                    steps: ["Simulating agency teamwork using Agile frameworks and git.", "Complete polish for LinkedIn profiles, portfolios, and coding tests.", "Direct pipeline submission to Gulf partners and remote tech clients."],
+                    outcome: "A technical career contract or verified direct internship"
+                },
+                changer: {
+                    tag: "Complete Career Shifter",
+                    title: "Learn a Profit/Digital Skill from Absolute Zero",
+                    desc: "No technical background required. We systematically guide you to build high-demand assets:",
+                    steps: ["Initial alignment to choose coding, graphics, UI or design.", "Daily reviews to ensure you never get stuck or overwhelmed.", "Practical freelance training to close contracts and secure your first $100."],
+                    outcome: "Becoming a remote freelancer earning independent digital income"
+                }
+            }
+        };
+
+        // Tech Diagnostics Quiz Questions and compatibility metrics
+        const diagnosticQuiz = [
+            {
+                qAr: "ما هو الشيء الأكثر إمتاعاً بالنسبة لك عند تصفح المواقع؟",
+                qEn: "What is the most interesting thing to you when browsing websites?",
+                options: [
+                    { tAr: "فهم طريقة تنظيم البيانات وسرعة استجابة الموقع وتجاوبه", tEn: "Understanding how data is organized and how fast it responds", scores: { programming: 40, design: 5, freelancing: 10 } },
+                    { tAr: "جمال الألوان، ترتيب العناصر، وسهولة تصفح الواجهات", tEn: "The beauty of colors, element layouts, and interface ease of use", scores: { programming: 5, design: 45, freelancing: 5 } },
+                    { tAr: "آلية ترويج الموقع وكيفية جني صاحب الموقع للأرباح", tEn: "How the site is promoted and how the owner makes profits", scores: { programming: 10, design: 10, freelancing: 40 } }
+                ]
+            },
+            {
+                qAr: "عندما تفكر في مشروعك القادم، كيف تحب البدء؟",
+                qEn: "When thinking of your next project, how do you prefer to start?",
+                options: [
+                    { tAr: "كتابة الخوارزميات، التفكير في المنطق، وهندسة الأكواد", tEn: "Writing algorithms, thinking of logic, and software engineering", scores: { programming: 45, design: 5, freelancing: 10 } },
+                    { tAr: "رسم النماذج السريعة، تجربة الخطوط، وتنسيق الأبعاد بصرياً", tEn: "Drawing quick mockups, trying fonts, and aligning dimensions visually", scores: { programming: 5, design: 45, freelancing: 10 } },
+                    { tAr: "البحث عن العملاء المحتملين، وكتابة خطة عمل واضحة للمشروع", tEn: "Searching for potential clients and writing a clear business plan", scores: { programming: 10, design: 5, freelancing: 45 } }
+                ]
+            },
+            {
+                qAr: "كيف تفضل قضاء ساعات عملك اليومية؟",
+                qEn: "How do you prefer to spend your daily work hours?",
+                options: [
+                    { tAr: "منعزلاً لحل مشاكل برمجية معقدة وبناء هياكل تقنية متينة", tEn: "Isolated to solve complex coding bugs and build sturdy structures", scores: { programming: 45, design: 5, freelancing: 5 } },
+                    { tAr: "بناء تصاميم جذابة وتخيل تجربة مستخدم مبهرة ومريحة للعين", tEn: "Building beautiful designs and imagining comfortable user experiences", scores: { programming: 5, design: 45, freelancing: 5 } },
+                    { tAr: "التواصل مع الزبائن، والتفاوض حول المشاريع، وإدارة الوقت والمال", tEn: "Communicating with clients, negotiating contracts, and managing money", scores: { programming: 5, design: 10, freelancing: 45 } }
+                ]
+            }
+        ];
+
+        let currentQuizIndex = 0;
+        let quizScores = { programming: 0, design: 0, freelancing: 0 };
 
         document.addEventListener("DOMContentLoaded", () => {
             initCinematicPreloader();
@@ -1013,100 +1061,8 @@
             applyLanguageStyle(activeLang);
             initScrollAnimations();
             init3DCardParallax();
-            detectUserIPAddress();
-            initFirebaseConnection();
+            logLiveActivity("الموقع تّم تشغيله بنجاح لزائر جديد.");
         });
-
-        // Detect real visitor IP address on load
-        function detectUserIPAddress() {
-            fetch('https://api.ipify.org?format=json')
-                .then(res => res.json())
-                .then(data => {
-                    window.userIP = data.ip;
-                    logLiveActivity("تم رصد عنوان IP الزائر بنجاح وتأمينه سحابياً.");
-                })
-                .catch(err => {
-                    window.userIP = "Unknown IP";
-                    console.error("IP detection failed:", err);
-                });
-        }
-
-        // Initialize Firebase Connection from Admin settings
-        function initFirebaseConnection() {
-            const fbConfig = {
-                apiKey: localStorage.getItem('met_fb_apikey') || "",
-                databaseURL: localStorage.getItem('met_fb_dburl') || "",
-                projectId: localStorage.getItem('met_fb_projectid') || "",
-                appId: localStorage.getItem('met_fb_appid') || ""
-            };
-
-            const statusBadge = document.getElementById("db-status-badge");
-
-            if (fbConfig.apiKey && fbConfig.databaseURL) {
-                try {
-                    if (!firebase.apps.length) {
-                        firebase.initializeApp(fbConfig);
-                    }
-                    firebaseDB = firebase.database();
-                    
-                    statusBadge.innerText = "ONLINE - CLOUD CONNECTED";
-                    statusBadge.className = "text-[9px] px-2 py-0.5 rounded-full bg-brand-green/20 text-brand-greenLight font-mono border border-brand-green/40";
-                    
-                    // Live listeners to sync Cloud Applicants and Live Activities
-                    syncCloudDatabase();
-                } catch (error) {
-                    console.error("Firebase init failed:", error);
-                    statusBadge.innerText = "OFFLINE - FIREBASE ERROR";
-                    statusBadge.className = "text-[9px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-mono border border-red-500/30";
-                }
-            } else {
-                statusBadge.innerText = "LOCAL STORAGE MODE";
-                statusBadge.className = "text-[9px] px-2 py-0.5 rounded-full bg-white/5 text-gray-400 font-mono";
-            }
-        }
-
-        // Synchronize local arrays with Firebase real-time nodes
-        function syncCloudDatabase() {
-            if (!firebaseDB) return;
-
-            // 1. Sync Applicants with real-time update events
-            firebaseDB.ref('applicants').on('value', (snapshot) => {
-                const cloudData = snapshot.val();
-                if (cloudData) {
-                    // Turn object keys into arrays
-                    applicants = Object.keys(cloudData).map(key => ({
-                        id: key,
-                        ...cloudData[key]
-                    }));
-                } else {
-                    applicants = [];
-                }
-                localStorage.setItem('met_applicants_list', JSON.stringify(applicants));
-                renderApplicantsTable();
-            });
-
-            // 2. Sync Live Events Logs
-            firebaseDB.ref('activities').limitToFirst(100).on('value', (snapshot) => {
-                const cloudLog = snapshot.val();
-                if (cloudLog) {
-                    activityLog = Object.keys(cloudLog).map(key => ({
-                        id: key,
-                        ...cloudLog[key]
-                    })).reverse(); // keeping the newest on top
-                }
-                renderActivityLoggerBox();
-            });
-
-            // 3. Sync Dynamic Bilingual Text Content
-            firebaseDB.ref('site_content').on('value', (snapshot) => {
-                const cloudContent = snapshot.val();
-                if (cloudContent) {
-                    siteContent = cloudContent;
-                    localStorage.setItem('met_site_content_v2', JSON.stringify(siteContent));
-                    applyLanguageStyle(activeLang);
-                }
-            });
-        }
 
         function scrollToTop() {
             window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1581,23 +1537,12 @@
 
         function logLiveActivity(event, meta = "") {
             const time = new Date().toLocaleTimeString('ar-EG', { hour12: true });
-            const geoInfo = `[${window.userIP}] `;
-            const logItem = { 
-                time, 
-                event: `${geoInfo}${event}`, 
-                meta 
-            };
-            
+            const logItem = { time, event, meta };
             activityLog.unshift(logItem);
-            if (activityLog.length > 200) activityLog.pop();
             
+            if (activityLog.length > 200) activityLog.pop();
             localStorage.setItem('met_activity_log', JSON.stringify(activityLog));
             renderActivityLoggerBox();
-
-            // Store directly in Google Firebase Node
-            if (firebaseDB) {
-                firebaseDB.ref('activities').push(logItem);
-            }
         }
 
         function renderActivityLoggerBox() {
@@ -1610,10 +1555,10 @@
             }
 
             box.innerHTML = activityLog.map(act => `
-                <div class="border-b border-white/5 pb-1 text-right">
+                <div class="border-b border-white/5 pb-1">
                     <span class="text-brand-green font-bold">[${act.time}]</span>
                     <span class="text-white">${act.event}</span>
-                    ${act.meta ? `<span class="text-gray-400 block pr-4 mt-0.5 text-[10px] bg-white/5 p-1 rounded-md max-w-lg">${act.meta}</span>` : ''}
+                    ${act.meta ? `<span class="text-gray-400 block pl-4 mt-0.5">${act.meta}</span>` : ''}
                 </div>
             `).join('');
         }
@@ -1621,11 +1566,8 @@
         function clearActivityLog() {
             activityLog = [];
             localStorage.removeItem('met_activity_log');
-            if (firebaseDB) {
-                firebaseDB.ref('activities').remove();
-            }
             renderActivityLoggerBox();
-            logLiveActivity("تم تفريغ سجل الحركات السحابي بالكامل.");
+            logLiveActivity("تم تفريغ سجل الحركات بالكامل.");
         }
 
         function openAdminPanel() {
@@ -1661,7 +1603,7 @@
                 return;
             }
 
-            tbody.innerHTML = applicants.map((app) => {
+            tbody.innerHTML = applicants.map((app, idx) => {
                 const directWhatsapp = app.phone.replace(/[^0-9]/g, '');
                 return `
                     <tr class="hover:bg-white/5 transition-colors">
@@ -1676,34 +1618,25 @@
                         <td class="p-3 text-[11px] font-bold text-brand-greenLight">${app.track}</td>
                         <td class="p-3 text-[11px] max-w-xs truncate" title="${app.motivation}">${app.motivation}</td>
                         <td class="p-3 text-center">
-                            <button onclick="removeApplicantRecord('${app.id || ''}')" class="px-2 py-1 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded border border-red-500/10">حذف</button>
+                            <button onclick="removeApplicantRecord(${idx})" class="px-2 py-1 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded border border-red-500/10">حذف</button>
                         </td>
                     </tr>
                 `;
             }).join('');
         }
 
-        function removeApplicantRecord(id) {
-            if (!id) return;
-            logLiveActivity("حذف ملف طالب متقدم من المنظومة السحابية.");
-            if (firebaseDB) {
-                firebaseDB.ref('applicants').child(id).remove();
-            } else {
-                applicants = applicants.filter(app => app.id !== id);
-                localStorage.setItem('met_applicants_list', JSON.stringify(applicants));
-                renderApplicantsTable();
-            }
+        function removeApplicantRecord(idx) {
+            logLiveActivity(`حذف ملف الطالب المتقدم: ${applicants[idx].name}`);
+            applicants.splice(idx, 1);
+            localStorage.setItem('met_applicants_list', JSON.stringify(applicants));
+            renderApplicantsTable();
         }
 
         function clearAllApplicants() {
-            if (firebaseDB) {
-                firebaseDB.ref('applicants').remove();
-            } else {
-                applicants = [];
-                localStorage.removeItem('met_applicants_list');
-                renderApplicantsTable();
-            }
-            logLiveActivity("تفريغ وحذف جميع بيانات المنتسبين سحابياً.");
+            applicants = [];
+            localStorage.removeItem('met_applicants_list');
+            renderApplicantsTable();
+            logLiveActivity("تفريغ وحذف جميع بيانات المنتسبين بالكامل.");
         }
 
         function populateContentEditors() {
@@ -1726,13 +1659,8 @@
             siteContent.en.hero_desc = document.getElementById("edit-en-desc").value;
 
             localStorage.setItem('met_site_content_v2', JSON.stringify(siteContent));
-            
-            if (firebaseDB) {
-                firebaseDB.ref('site_content').set(siteContent);
-            }
-
             applyLanguageStyle(activeLang);
-            logLiveActivity("تحديث وحفظ نصوص الموقع بنجاح ومزامنتها على الـ Cloud.");
+            logLiveActivity("تحديث وحفظ نصوص الموقع بنجاح من لوحة التحرير.");
             closeAdminPanel();
         }
 
@@ -1765,12 +1693,6 @@
             document.getElementById("admin-api-jskey").value = localStorage.getItem('met_api_jskey') || '';
             document.getElementById("admin-api-service").value = localStorage.getItem('met_api_service') || '';
             document.getElementById("admin-api-template").value = localStorage.getItem('met_api_template') || '';
-            
-            // Firebase Defaults
-            document.getElementById("admin-fb-apikey").value = localStorage.getItem('met_fb_apikey') || '';
-            document.getElementById("admin-fb-dburl").value = localStorage.getItem('met_fb_dburl') || '';
-            document.getElementById("admin-fb-projectid").value = localStorage.getItem('met_fb_projectid') || '';
-            document.getElementById("admin-fb-appid").value = localStorage.getItem('met_fb_appid') || '';
         }
 
         function saveAdminAPISettings() {
@@ -1779,22 +1701,10 @@
             const service = document.getElementById("admin-api-service").value.trim();
             const template = document.getElementById("admin-api-template").value.trim();
 
-            // Firebase Elements
-            const fbApiKey = document.getElementById("admin-fb-apikey").value.trim();
-            const fbDbUrl = document.getElementById("admin-fb-dburl").value.trim();
-            const fbProjectId = document.getElementById("admin-fb-projectid").value.trim();
-            const fbAppId = document.getElementById("admin-fb-appid").value.trim();
-
             localStorage.setItem('met_api_gemini', gemini);
             localStorage.setItem('met_api_jskey', jskey);
             localStorage.setItem('met_api_service', service);
             localStorage.setItem('met_api_template', template);
-
-            // Store Firebase
-            localStorage.setItem('met_fb_apikey', fbApiKey);
-            localStorage.setItem('met_fb_dburl', fbDbUrl);
-            localStorage.setItem('met_fb_projectid', fbProjectId);
-            localStorage.setItem('met_fb_appid', fbAppId);
 
             if (gemini) {
                 document.getElementById("ai-status").innerText = "Gemini API (Active)";
@@ -1808,10 +1718,7 @@
                 emailjs.init(jskey);
             }
 
-            // Re-establish Firebase
-            initFirebaseConnection();
-
-            logLiveActivity("حفظ وإعداد وتحديث مفاتيح نظام الـ AI وقاعدة بيانات الـ Firebase.");
+            logLiveActivity("حفظ وإعداد وتحديث مفاتيح نظام الـ AI والبريد بنجاح.");
             closeAdminPanel();
         }
 
@@ -2105,15 +2012,8 @@
             spinner.classList.remove("hidden");
 
             const record = { name, phone, academic, track, motivation };
-
-            // Store in Firebase Cloud Database or LocalStorage
-            if (firebaseDB) {
-                firebaseDB.ref('applicants').push(record);
-            } else {
-                applicants.push(record);
-                localStorage.setItem('met_applicants_list', JSON.stringify(applicants));
-            }
-
+            applicants.push(record);
+            localStorage.setItem('met_applicants_list', JSON.stringify(applicants));
             logLiveActivity("طالب جديد أرسل نموذج القبول والمقابلة الأولى!", `الاسم: ${name} | مسار: ${track}`);
 
             const jskey = localStorage.getItem('met_api_jskey');
