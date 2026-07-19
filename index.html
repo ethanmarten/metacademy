@@ -526,10 +526,6 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <!-- Toggle voice reading button -->
-                            <button id="toggle-voice-btn" onclick="toggleVoiceReading()" class="p-2 rounded-lg bg-white/5 hover:bg-brand-green/20 text-gray-300 hover:text-white transition-all" title="تفعيل/تعطيل قراءة الرد صوتياً">
-                                <i class="fa-solid fa-volume-high" id="voice-icon"></i>
-                            </button>
                             <span id="ai-status" class="text-xs text-gray-400 font-mono">Gemini (Offline Fallback)</span>
                         </div>
                     </div>
@@ -975,7 +971,6 @@
         let lastLogoClickTime = 0;
         let applicants = JSON.parse(localStorage.getItem('met_applicants_list')) || [];
         let activityLog = JSON.parse(localStorage.getItem('met_activity_log')) || [];
-        let voiceReadingActive = true;
 
         const pathfinderData = {
             ar: {
@@ -1540,35 +1535,6 @@
             };
         }
 
-        function toggleVoiceReading() {
-            voiceReadingActive = !voiceReadingActive;
-            const icon = document.getElementById("voice-icon");
-            if (voiceReadingActive) {
-                icon.className = "fa-solid fa-volume-high text-brand-green";
-                logLiveActivity("المستشار الذكي: تفعيل خاصية القراءة الصوتية.");
-            } else {
-                icon.className = "fa-solid fa-volume-xmark";
-                window.speechSynthesis.cancel();
-                logLiveActivity("المستشار الذكي: إيقاف خاصية القراءة الصوتية.");
-            }
-        }
-
-        function speakText(text) {
-            if (!voiceReadingActive) return;
-
-            window.speechSynthesis.cancel(); // Stop current synthesis
-            
-            // Clean markdown tags out for pronunciation accuracy
-            const cleanText = text.replace(/[*_`#]/g, '');
-            const utterance = new SpeechSynthesisUtterance(cleanText);
-            
-            utterance.lang = activeLang === 'ar' ? 'ar-EG' : 'en-US';
-            utterance.rate = 1.0;
-            utterance.pitch = 1.0;
-
-            window.speechSynthesis.speak(utterance);
-        }
-
         function logLiveActivity(event, meta = "") {
             const time = new Date().toLocaleTimeString('ar-EG', { hour12: true });
             const logItem = { time, event, meta };
@@ -1948,18 +1914,15 @@
                     document.getElementById(loadId).remove();
                     if (text) {
                         renderChatMessage(text, "bot");
-                        speakText(text);
                         logLiveActivity("رد المستشار بنجاح عبر Gemini.");
                     } else {
                         const fallback = getFallbackAdvisorResponse(q);
                         renderChatMessage(fallback, "bot");
-                        speakText(fallback);
                     }
                 } catch (e) {
                     document.getElementById(loadId).remove();
                     const fallback = getFallbackAdvisorResponse(q);
                     renderChatMessage(fallback, "bot");
-                    speakText(fallback);
                     logLiveActivity("فشل الاتصال بـ Gemini، تفعيل الذكاء الاحتياطي.");
                 }
             } else {
@@ -1967,7 +1930,6 @@
                     document.getElementById(loadId).remove();
                     const fallback = getFallbackAdvisorResponse(q);
                     renderChatMessage(fallback, "bot");
-                    speakText(fallback);
                 }, 800);
             }
         }
